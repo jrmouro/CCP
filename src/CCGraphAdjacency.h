@@ -1,24 +1,29 @@
 #ifndef CCGRAPHADJACENCY_H
 #define CCGRAPHADJACENCY_H
 
+
+#include <ostream>
+
 class CCGraphNodo;
 
 class CCGraphAdjacency{
 public:
     
     CCGraphAdjacency(
-            const CCGraphNodo& nodo, 
+            CCGraphNodo* nodo, 
             int weight);
     
     virtual ~CCGraphAdjacency();
     
-    CCGraphNodo GetNodo() const;
+    CCGraphNodo* GetNodo() const;
     
     int GetWeight() const;
+    
+    friend std::ostream& operator<<(std::ostream& os, const CCGraphAdjacency& obj);
 
 private:
     
-    CCGraphNodo nodo;
+    CCGraphNodo* nodo;
     int weight; 
     
 };

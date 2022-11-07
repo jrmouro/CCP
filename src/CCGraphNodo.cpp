@@ -1,7 +1,10 @@
+#include <map>
+#include <utility>
+#include <algorithm>
+#include <ostream>
 #include "CCGraphNodo.h"
-#include "CCGraphAdjacency.h"
 
-CCGraphNodo::CCGraphNodo(int weight):weight(weight){}
+CCGraphNodo::CCGraphNodo(int label, int weight):label(label), weight(weight){}
     
 CCGraphNodo::~CCGraphNodo(){}
     
@@ -9,24 +12,39 @@ int CCGraphNodo::GetWeight() const {
     return weight;
 }
 
-void CCGraphNodo::addAdjacency(const CCGraphAdjacency& adjacency){
-    this->adjacency.insert(adjacency);
+int CCGraphNodo::GetLabel() const {
+    return label;
 }
 
-void CCGraphNodo::listAdjacency((void (*fun)(const CCGraphAdjacency&))){
-
-    std::for_each(adjacency.begin(), adjacency.end(), fun);
-
+void CCGraphNodo::SetWeight(int weight) {
+    this->weight = weight;
 }
 
-int CCGraphNodo::adjacencyWeight(){
+
+void CCGraphNodo::addAdjacency(int nodo, int weight){
+    this->adjacency[nodo] = weight;
+}
+
+int CCGraphNodo::adjacencyWeight()const{
         
     int s = 0;
 
-    this->listAdjacency([s&](CCGraphAdjacency ajd){
-        s += adj.GetWeight();
+    std::for_each(adjacency.begin(), adjacency.end(), [&s](const std::pair<int,int>& pair){
+        s += pair.second;
     });
-
+    
     return s;
 
 }
+
+std::ostream& operator<<(std::ostream& os, const CCGraphNodo& obj) {
+
+    os << obj.GetLabel() << " (" << obj.GetWeight() << ")" << std::endl;
+        
+    std::for_each(obj.adjacency.begin(), obj.adjacency.end(), [&os](const std::pair<int,int>& pair){
+        os << "  :" << pair.second << " -> " << pair.first << std::endl;
+    });
+
+    return os;
+    
+}   
