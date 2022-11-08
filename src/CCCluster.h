@@ -59,8 +59,16 @@ public:
             int s = 0;
 
             this->graph->ListEdge(nodo, [nodo, this, &s](int dst, int w) {
+                
+                //TODO
+                
+                std::set<int>::iterator itAux = this->nodos.find(dst);
 
-                s += w + this->graph->EdgeWeight(dst, nodo);
+                if (itAux != this->nodos.end()){
+                    
+                    s += w + this->graph->EdgeWeight(dst, nodo);
+
+                }
 
             });
 
@@ -70,9 +78,35 @@ public:
 
     }
 
-    void DelNodo(int nodo) {
+    void DelNodo(int nodo) {        
+        
+        std::set<int>::iterator it = this->nodos.find(nodo);
 
-        this->nodos.erase(nodo);
+        if (it != this->nodos.end()) {
+
+            this->nodos.erase(nodo);
+
+            int s = 0;
+
+            this->graph->ListEdge(nodo, [nodo, this, &s](int dst, int w) {
+                
+                //TODO
+                
+                std::set<int>::iterator itAux = this->nodos.find(dst);
+
+                if (itAux != this->nodos.end()){
+                    
+                    s += w + this->graph->EdgeWeight(dst, nodo);
+
+                }
+
+                
+
+            });
+
+            this->evaluation -= s;
+
+        }
 
     }
 
