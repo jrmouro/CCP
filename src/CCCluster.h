@@ -1,43 +1,57 @@
 #ifndef CCCLUSTER_H
 #define CCCLUSTER_H
 
-#include <set>
+#include <vector>
 #include "_Evaluable.h"
 #include "CCGraph.h"
 
 class CCCluster : public _Evaluable<int> {
 public:
 
-    CCCluster(const CCGraph& graph) : _Evaluable<int>(0), graph(graph) { }
+    CCCluster(CCGraph* graph) :
+    _Evaluable<int>(0),
+    representation(graph->GetSize(), 0),
+    graph(graph) {
+    }
 
-    virtual ~CCCluster() { }
+    virtual ~CCCluster() {
+    }
 
     int reevaluate() {
 
         int ret = 0;
 
-        std::set<int>::iterator iti;
-        for (iti = nodos.begin(); iti != nodos.end(); ++iti) {
+        std::vector<int>::iterator iti;
+        for (iti = representation.begin(); iti != representation.end(); ++iti) {
             int i = *iti;
-            std::set<int>::iterator itj;
-            for (itj = nodos.begin(); itj != nodos.end(); ++itj) {
-                int j = *itj;
+            if (i == 1) {
+                std::vector<int>::iterator itj;
+                for (itj = representation.begin(); itj != representation.end(); ++itj) {
+                    int j = *itj;
+                    if (j == 1) {
+                        ret += this->graph->EdgeWeight(i, j);
+                    }
 
-                ret += this->graph.EdgeWeight(i, j);
-
+                }
             }
         }
-        
+
         return ret;
 
     }
 
     friend std::ostream& operator<<(std::ostream& os, const CCCluster& obj) {
 
-        std::set<int>::iterator iti;
-        for (iti = obj.nodos.begin(); iti != obj.nodos.end(); ++iti) {
+        std::vector<int>::const_iterator iti;
+
+        int nodo = 0;
+        for (iti = obj.representation.begin(); iti != obj.representation.end(); ++iti) {
             int i = *iti;
-            os << i << " ";
+
+            if (i == 1) os << nodo << " ";
+
+            nodo++;
+
         }
 
         os << std::endl;
@@ -48,23 +62,17 @@ public:
 
     void AddNodo(int nodo) {
 
-        std::set<int>::iterator it = this->nodos.find(nodo);
+        if (this->representation.at(nodo) == 0) {
 
-        if (it == this->nodos.end()) {
-
-            this->nodos.insert(nodo);
+            this->representation.at(nodo) = 1;
 
             int s = 0;
 
-            this->graph.ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
-                
-                //TODO
-                
-                std::set<int>::iterator itAux = this->nodos.find(dst);
+            this->graph->ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
 
-                if (itAux != this->nodos.end()){
-                    
-                    s += w + this->graph.EdgeWeight(dst, nodo);
+                if (this->representation.at(dst) == 1) {
+
+                    s += w + this->graph->EdgeWeight(dst, nodo);
 
                 }
 
@@ -76,29 +84,44 @@ public:
 
     }
 
-    void DelNodo(int nodo) {        
+    void SwapNodo(int nodo) {
         
-        std::set<int>::iterator it = this->nodos.find(nodo);
+        if (this->representation.at(nodo) == 0) {
+            
+            this->AddNodo(nodo);
+            
+        } else {
+            
+            this->DelNodo(nodo);
+        
+        }
+        
+    }
+    
+    void SetNodo(int nodo, int value){
+        if(value == 0)
+            DelNodo(nodo);
+        else
+            AddNodo(nodo);
+    }
 
-        if (it != this->nodos.end()) {
+    void DelNodo(int nodo) {
 
-            this->nodos.erase(nodo);
+        if (this->representation.at(nodo) == 1) {
+
+            this->representation.at(nodo) = 0;
 
             int s = 0;
 
-            this->graph.ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
-                
-                //TODO
-                
-                std::set<int>::iterator itAux = this->nodos.find(dst);
+            this->graph->ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
 
-                if (itAux != this->nodos.end()){
-                    
-                    s += w + this->graph.EdgeWeight(dst, nodo);
+                if (this->representation.at(dst) == 1) {
+
+                    s += w + this->graph->EdgeWeight(dst, nodo);
 
                 }
 
-                
+
 
             });
 
@@ -108,11 +131,19 @@ public:
 
     }
 
+    std::vector<int> GetRepresentation() const {
+        return representation;
+    }
+
+    int GetNodoInto(int nodo) const{
+        return representation.at(nodo);
+    }
+
 
 private:
 
-    CCGraph graph;
-    std::set<int> nodos;
+    CCGraph *graph;
+    std::vector<int> representation;
 
 };
 

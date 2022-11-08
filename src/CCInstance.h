@@ -9,7 +9,7 @@
 class CCInstance : public _Instance {
 public:
 
-    CCInstance(std::string filename) {
+    CCInstance(std::string filename):filename(filename) {
 
         std::string line;
         std::ifstream readFile(filename);
@@ -79,7 +79,7 @@ public:
         return nClusters;
     }
 
-    int GetNElements() const {
+    int GetSize() const {
         if (this->graph != nullptr) return graph->GetSize();
         return 0;
     }
@@ -88,13 +88,26 @@ public:
         return upperClusterLimit;
     }
 
-    CCGraph GetGraph() const {
-        return CCGraph(*graph);
+    CCGraph* GetGraph() const {
+        return graph;
+    }
+    
+    std::string GetFilename() const {
+        return filename;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const CCInstance& obj) {
+        os << "nClusters: " << obj.nClusters << std::endl;
+        os << "clustersType: " << obj.clustersType << std::endl;
+        os << "lowerClusterLimit: " << obj.lowerClusterLimit << std::endl;
+        os << "upperClusterLimit: " << obj.upperClusterLimit << std::endl;
+        os << "graph:" << std::endl;
+        os << *obj.graph;
+        return os;
+    }
 
 private:
-
+    std::string filename;
     int nClusters = 0;
     std::string clustersType; // 0 -> ss, i -> ds
     int lowerClusterLimit;
