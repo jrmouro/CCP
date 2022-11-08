@@ -10,10 +10,6 @@
 class CCGraph {
 public:
 
-    int GetSize() const {
-        return size;
-    }
-
     CCGraph(int size) : size(size) {
 
         this->adjMatrix = new int*[size];
@@ -33,10 +29,74 @@ public:
         }
 
     }
+    
+    CCGraph(const CCGraph& other) :
+        size(other.size){
+        
+        this->adjMatrix = new int*[size];
+        this->nodosWeight = new int[size];
+        
+        for (int i = 0; i < size; i++) {
 
-    void SetNodo(int label, int weight) {
+            this->nodosWeight[i] = other.nodosWeight[i];
+            this->adjMatrix[i] = new int(size);
 
-        this->nodosWeight[label] = weight;
+            for (int j = 0; j < size; j++) {
+
+                this->adjMatrix[i][j] = other.adjMatrix[i][j];
+
+            }
+
+        }
+        
+    }
+    
+    CCGraph& operator=(const CCGraph& right) {
+        // Check for self-assignment!
+        if (this == &right) // Same object?
+            return *this; // Yes, so skip assignment, and just return *this.
+        
+        for (int j = 0; j < size; j++) {
+
+            delete adjMatrix[j];
+
+        }
+        
+        
+
+        delete [] this->adjMatrix;
+        delete [] this->nodosWeight;
+        
+        this->size = right.size;
+        
+        this->adjMatrix = new int*[right.size];
+        this->nodosWeight = new int[right.size];
+        
+        for (int i = 0; i < right.size; i++) {
+
+            this->nodosWeight[i] = right.nodosWeight[i];
+            this->adjMatrix[i] = new int(right.size);
+
+            for (int j = 0; j < right.size; j++) {
+
+                this->adjMatrix[i][j] = right.adjMatrix[i][j];
+
+            }
+
+        }
+        
+        return *this;
+    }
+
+    
+
+    int GetSize() const {
+        return size;
+    }
+
+    void SetNodo(int nodoLabel, int weight) {
+
+        this->nodosWeight[nodoLabel] = weight;
 
     }
 
@@ -47,6 +107,12 @@ public:
         return true;
 
     }
+    
+    int NodoWeight(int nodoLabel) {
+
+        return this->nodosWeight[nodoLabel];
+
+    }
 
     int EdgeWeight(int nodoLabel1, int nodoLabel2) {
 
@@ -54,11 +120,33 @@ public:
 
     }
 
-    void ListEdge(int orig, std::function<void(int dst, int weight)> functor) {
+    void ListEdgesByNodo(int origLabel, std::function<void(int dstLabel, int weight)> functor) {
 
         for (int j = 0; j < size; j++) {
             
-            functor(j, adjMatrix[orig][j]);
+            functor(j, adjMatrix[origLabel][j]);
+
+        }
+
+    }
+    
+    void ListEdges(std::function<void(int origLabel, int dstLabel, int weight)> functor) {
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+
+                functor(i, j, adjMatrix[i][j]);
+
+            }
+        }
+
+    }
+    
+    void ListNodos(std::function<void(int nodoLabel, int weight)> functor) {
+
+        for (int j = 0; j < size; j++) {
+            
+            functor(j, nodosWeight[j]);
 
         }
 

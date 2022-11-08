@@ -1,31 +1,78 @@
 #ifndef CCINSTANCE_H
 #define CCINSTANCE_H
 
-#include <unordered_map>
+#include <fstream>
+#include  <sstream>
+#include "CCGraph.h"
+#include "_Instance.h"
 
-#include "src/CCGraph.h"
-
-class CCInstance : public _Instance{
+class CCInstance : public _Instance {
 public:
-    
-    CCInstance(std::string filename){
-    
-        // ?
-    
+
+    CCInstance(std::string filename) {
+
+        std::string line;
+        std::ifstream readFile(filename);
+
+
+        if (readFile.is_open()) {
+
+            int size;
+            std::string gambiarra;
+            readFile >> size;
+            this->graph = new CCGraph(size);
+
+            readFile >> this->nClusters;
+            readFile >> clustersType;
+            readFile >> this->lowerClusterLimit;
+            readFile >> this->upperClusterLimit;
+            readFile >> gambiarra; // read W
+
+            for (int i = 0; i < size; i++) {
+                int w;
+                readFile >> w;
+                graph->SetNodo(i, w);
+            }
+
+            getline(readFile, line);
+            while (getline(readFile, line)) {
+                int n1, n2, w;
+                std::stringstream ss(line);
+
+                ss >> n1;
+                ss >> n2;
+                ss >> w;
+
+                graph->AddEdge(n1, n2, w);
+            }
+
+
+            readFile.close();
+
+        } else {
+
+            std::cerr << "Could not open the file - '"
+                    << filename << "'" << std::endl;
+
+        }
+
+
+
+
     }
-    
-    virtual ~CCInstance() {}
-    
-     int GetClustersSize() const {
-        return clustersSize;
+
+    virtual ~CCInstance() {
+
+        if (graph != nullptr) delete graph;
+
+    }
+
+    std::string GetClustersType() const {
+        return clustersType;
     }
 
     int GetLowerClusterLimit() const {
         return lowerClusterLimit;
-    }
-
-    int* GetMatrix() const {
-        return matrix;
     }
 
     int GetNClusters() const {
@@ -33,31 +80,28 @@ public:
     }
 
     int GetNElements() const {
-        return nElements;
-    }
-
-    int* GetNodoWeights() const {
-        return nodoWeights;
+        if (this->graph != nullptr) return graph->GetSize();
+        return 0;
     }
 
     int GetUpperClusterLimit() const {
         return upperClusterLimit;
     }
 
-    
+    CCGraph GetGraph() const {
+        return CCGraph(*graph);
+    }
+
+
 private:
-    
-    int nElements;
-    int nClusters;
-    int clustersSize; // 0 -> ss, i -> ds
+
+    int nClusters = 0;
+    std::string clustersType; // 0 -> ss, i -> ds
     int lowerClusterLimit;
-    int upperClusterLimit; 
-    
-    int* nodoWeights;
-    int* adjacencyMatrix;
-    
-     
-    
+    int upperClusterLimit;
+
+    CCGraph* graph = nullptr;
+
 };
 
 #endif /* CCINSTANCE_H */

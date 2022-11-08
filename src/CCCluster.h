@@ -8,11 +8,9 @@
 class CCCluster : public _Evaluable<int> {
 public:
 
-    CCCluster(CCGraph *graph) : graph(graph) {
-    }
+    CCCluster(const CCGraph& graph) : _Evaluable<int>(0), graph(graph) { }
 
-    virtual ~CCCluster() {
-    }
+    virtual ~CCCluster() { }
 
     int reevaluate() {
 
@@ -25,7 +23,7 @@ public:
             for (itj = nodos.begin(); itj != nodos.end(); ++itj) {
                 int j = *itj;
 
-                ret += this->graph->EdgeWeight(i, j);
+                ret += this->graph.EdgeWeight(i, j);
 
             }
         }
@@ -58,7 +56,7 @@ public:
 
             int s = 0;
 
-            this->graph->ListEdge(nodo, [nodo, this, &s](int dst, int w) {
+            this->graph.ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
                 
                 //TODO
                 
@@ -66,7 +64,7 @@ public:
 
                 if (itAux != this->nodos.end()){
                     
-                    s += w + this->graph->EdgeWeight(dst, nodo);
+                    s += w + this->graph.EdgeWeight(dst, nodo);
 
                 }
 
@@ -88,7 +86,7 @@ public:
 
             int s = 0;
 
-            this->graph->ListEdge(nodo, [nodo, this, &s](int dst, int w) {
+            this->graph.ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
                 
                 //TODO
                 
@@ -96,7 +94,7 @@ public:
 
                 if (itAux != this->nodos.end()){
                     
-                    s += w + this->graph->EdgeWeight(dst, nodo);
+                    s += w + this->graph.EdgeWeight(dst, nodo);
 
                 }
 
@@ -113,7 +111,7 @@ public:
 
 private:
 
-    CCGraph *graph;
+    CCGraph graph;
     std::set<int> nodos;
 
 };
