@@ -12,13 +12,13 @@ public:
 
     CCGraph(int size) : size(size) {
 
-        this->adjMatrix = new int*[size];
+        this->adjMatrix = new float*[size];
         this->nodosWeight = new int[size];
 
         for (int i = 0; i < size; i++) {
 
             this->nodosWeight[i] = 0;
-            this->adjMatrix[i] = new int(size);
+            this->adjMatrix[i] = new float(size);
 
             for (int j = 0; j < size; j++) {
 
@@ -33,13 +33,13 @@ public:
     CCGraph(const CCGraph& other) :
         size(other.size){
         
-        this->adjMatrix = new int*[size];
+        this->adjMatrix = new float*[size];
         this->nodosWeight = new int[size];
         
         for (int i = 0; i < size; i++) {
 
             this->nodosWeight[i] = other.nodosWeight[i];
-            this->adjMatrix[i] = new int(size);
+            this->adjMatrix[i] = new float(size);
 
             for (int j = 0; j < size; j++) {
 
@@ -69,13 +69,13 @@ public:
         
         this->size = right.size;
         
-        this->adjMatrix = new int*[right.size];
+        this->adjMatrix = new float*[right.size];
         this->nodosWeight = new int[right.size];
         
         for (int i = 0; i < right.size; i++) {
 
             this->nodosWeight[i] = right.nodosWeight[i];
-            this->adjMatrix[i] = new int(right.size);
+            this->adjMatrix[i] = new float(right.size);
 
             for (int j = 0; j < right.size; j++) {
 
@@ -100,7 +100,7 @@ public:
 
     }
 
-    bool AddEdge(int nodoLabel1, int nodoLabel2, int weight) {
+    bool AddEdge(int nodoLabel1, int nodoLabel2, float weight) {
 
         this->adjMatrix[nodoLabel1][nodoLabel2] = weight;
 
@@ -114,13 +114,13 @@ public:
 
     }
 
-    int EdgeWeight(int nodoLabel1, int nodoLabel2) {
+    float EdgeWeight(int nodoLabel1, int nodoLabel2) {
 
         return this->adjMatrix[nodoLabel1][nodoLabel2];
 
     }
 
-    void ListEdgesByNodo(int origLabel, std::function<void(int dstLabel, int weight)> functor) {
+    void ListEdgesByNodo(int origLabel, std::function<void(int dstLabel, float weight)> functor) {
 
         for (int j = 0; j < size; j++) {
             
@@ -130,7 +130,7 @@ public:
 
     }
     
-    void ListEdges(std::function<void(int origLabel, int dstLabel, int weight)> functor) {
+    void ListEdges(std::function<void(int origLabel, int dstLabel, float weight)> functor) {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -187,7 +187,7 @@ public:
 private:
 
     int size;
-    int **adjMatrix;
+    float **adjMatrix;
     int *nodosWeight;
 
 };

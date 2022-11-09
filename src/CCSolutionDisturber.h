@@ -3,13 +3,13 @@
 
 #include "_SolutionDisturber.h"
 
-class CCSolutionDisturber: public _SolutionDisturber<int*, int>{
+class CCSolutionDisturber: public _SolutionDisturber<int*, float>{
 
     public:
-    CCSolutionDisturber(double rate):_SolutionDisturber<int*, int>(), rate(rate) {}
-    CCSolutionDisturber(int seed, float rate):_SolutionDisturber<int*, int>(seed), rate(rate) {}
+    CCSolutionDisturber(double rate):_SolutionDisturber<int*, float>(), rate(rate) {}
+    CCSolutionDisturber(int seed, float rate):_SolutionDisturber<int*, float>(seed), rate(rate) {}
     virtual ~CCSolutionDisturber(){}
-    virtual _Solution<int*, int>* solve(_Solution<int*, int>* solution){
+    virtual _Solution<int*, float>* solve(_Solution<int*, float>* solution){
         
         CCSolution *ccSolution = (CCSolution *)solution;
         auto ret = new CCSolution(ccSolution);

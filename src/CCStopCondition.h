@@ -4,14 +4,14 @@
 #include "_StopCondition.h"
 #include "_Solution.h"
 
-class CCStopCondition : public _StopCondition<int*,int>{
+class CCStopCondition : public _StopCondition<int*,float>{
 public:
     
     CCStopCondition(int nIterations):nIterations(nIterations){}
     
     virtual ~CCStopCondition(){}
     
-    virtual bool stop(_Solution<int*,int>* solution){        
+    virtual bool stop(_Solution<int*,float>* solution){        
         current++;             
         return !(current < nIterations);        
     }

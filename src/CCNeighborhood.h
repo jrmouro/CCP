@@ -6,18 +6,18 @@
 #include "_Solution.h"
 #include "CCSolution.h"
 
-class CCNeighborhood : public _NeighborhoodAlgorithm<int *, int>{
+class CCNeighborhood : public _NeighborhoodAlgorithm<int *, float>{
 public:
     
     virtual ~CCNeighborhood() {}
 
-    virtual std::vector<_Solution<int *, int> *> *solve(_Solution<int *, int> *solution){
+    virtual std::vector<_Solution<int *, float> *> *solve(_Solution<int *, float> *solution){
 
         CCSolution *ccSolution = (CCSolution *)solution;
         int nClusters = ccSolution->GetInstance()->GetNClusters();
         int size = ccSolution->GetInstance()->GetSize();
 
-        std::vector<_Solution<int *, int> *> *ret = new std::vector<_Solution<int *, int> *>();
+        std::vector<_Solution<int *, float> *> *ret = new std::vector<_Solution<int *, float> *>();
 
         for (int n = 0; n < size; n++){
 

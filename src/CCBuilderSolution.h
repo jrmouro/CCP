@@ -6,14 +6,14 @@
 #include "_BuilderSolution.h"
 #include "CCSolution.h"
 
-class CCBuilderSolution : public _BuilderSolution<int*, int> {
+class CCBuilderSolution : public _BuilderSolution<int*, float> {
 public:
 
-    CCBuilderSolution() :_BuilderSolution(){ }
+    CCBuilderSolution() :_BuilderSolution<int*, float>(){ }
 
     virtual ~CCBuilderSolution() { }
 
-    virtual _Solution<int*, int>* solve(_Instance* instance) {
+    virtual _Solution<int*, float>* solve(_Instance* instance) {
 
         CCInstance *ccinstance = (CCInstance*) instance;
         CCSolution *ret = new CCSolution(ccinstance);

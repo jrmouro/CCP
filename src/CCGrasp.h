@@ -13,18 +13,18 @@
 #include "_SolutionDisturber.h"
 #include "_StopCondition.h"
 
-class CCGrasp : public _Grasp<int*,int> {
+class CCGrasp : public _Grasp<int*,float> {
 public:
     CCGrasp( CCBuilderSolution* builderSolution, 
             CCStopCondition* stopCondition,
             CCSolutionDisturber* solutionDisturber,
             CCLocalSearch* localSearch,
-            CCSolutionComparator* solutionComparator):_Grasp<int*,int>(
-                        (_BuilderSolution<int*,int>*)builderSolution,
-                        (_StopCondition<int*,int>*)stopCondition,
-                        (_SolutionDisturber<int*,int>*)solutionDisturber,
-                        (_LocalSearch<int*,int>*)localSearch,
-                        (_SolutionComparator<int*,int>*)solutionComparator){}
+            CCSolutionComparator* solutionComparator):_Grasp<int*,float>(
+                        (_BuilderSolution<int*,float>*)builderSolution,
+                        (_StopCondition<int*,float>*)stopCondition,
+                        (_SolutionDisturber<int*,float>*)solutionDisturber,
+                        (_LocalSearch<int*,float>*)localSearch,
+                        (_SolutionComparator<int*,float>*)solutionComparator){}
                             
     virtual ~CCGrasp(){}
     

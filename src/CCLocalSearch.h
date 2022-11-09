@@ -5,14 +5,14 @@
 #include "CCSolutionComparator.h"
 #include "CCNeighborhood.h"
 
-class CCLocalSearch : public _LocalSearch<int*, int> {
+class CCLocalSearch : public _LocalSearch<int*, float> {
 public:
 
     CCLocalSearch(
         CCNeighborhood* neighborhood,
-        CCSolutionComparator* solutionComparator):_LocalSearch<int*, int>(
-        (_NeighborhoodAlgorithm<int*,int>*)neighborhood, 
-        (_SolutionComparator<int*,int>*)solutionComparator) {}
+        CCSolutionComparator* solutionComparator):_LocalSearch<int*, float>(
+        (_NeighborhoodAlgorithm<int*,float>*)neighborhood, 
+        (_SolutionComparator<int*,float>*)solutionComparator) {}
 
     virtual ~CCLocalSearch() { }
 

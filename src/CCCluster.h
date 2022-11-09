@@ -5,22 +5,22 @@
 #include "_Evaluable.h"
 #include "CCGraph.h"
 
-class CCCluster : public _Evaluable<int> {
+class CCCluster : public _Evaluable<float> {
 public:
 
     CCCluster(CCGraph* graph) :
-        _Evaluable<int>(0),
+        _Evaluable<float>(0.0),
         representation(graph->GetSize(), 0),
         graph(graph) { }
         
     CCCluster(const CCCluster& other) : 
-        _Evaluable<int>(other),
+        _Evaluable<float>(other),
         nodoWeight(other.nodoWeight),
         graph(other.graph), 
         representation(other.representation) { }
 
     CCCluster(CCCluster* other) : 
-        _Evaluable<int>(other),
+        _Evaluable<float>(other),
         nodoWeight(other->nodoWeight),
         graph(other->graph),            
         representation(other->representation) { }
@@ -46,16 +46,16 @@ public:
 
     }
 
-    int AddNodo(int nodo, int* nodoWeight) {
+    float AddNodo(int nodo, int* nodoWeight) {
         
-        int s = 0;
+        float s = 0;
 
         if (this->representation.at(nodo) == 0) {
 
             this->representation.at(nodo) = 1;
 
 
-            this->graph->ListEdgesByNodo(nodo, [nodo, this, &s](int dst, int w) {
+            this->graph->ListEdgesByNodo(nodo, [nodo, this, &s](int dst, float w) {
 
                 if (this->representation.at(dst) == 1) {
 
@@ -77,7 +77,7 @@ public:
 
     }
 
-    int SwapNodo(int nodo, int* nodoWeight) {
+    float SwapNodo(int nodo, int* nodoWeight) {
         
         if (this->representation.at(nodo) == 0) {
             
@@ -91,16 +91,16 @@ public:
         
     }
     
-    int SetNodo(int nodo, int value, int* nodoWeight){
+    float SetNodo(int nodo, int value, int* nodoWeight){
         if(value == 0)
             return DelNodo(nodo, nodoWeight);
         
         return  AddNodo(nodo, nodoWeight);
     }
 
-    int DelNodo(int nodo, int* nodoWeight) {
+    float DelNodo(int nodo, int* nodoWeight) {
         
-        int s = 0;
+        float s = 0;
 
         if (this->representation.at(nodo) == 1) {
 
@@ -148,9 +148,9 @@ private:
     CCGraph *graph;
     std::vector<int> representation;
     
-    int reevaluate() {
+    float reevaluate() {
 
-        int ret = 0;
+        float ret = 0;
 
         std::vector<int>::iterator iti;
         for (iti = representation.begin(); iti != representation.end(); ++iti) {

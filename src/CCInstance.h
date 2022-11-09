@@ -36,7 +36,8 @@ public:
 
             getline(readFile, line);
             while (getline(readFile, line)) {
-                int n1, n2, w;
+                int n1, n2;
+                float w;
                 std::stringstream ss(line);
 
                 ss >> n1;

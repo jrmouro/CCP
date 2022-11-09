@@ -5,10 +5,10 @@
 #include "CCCluster.h"
 #include "CCInstance.h"
 
-class CCSolution : public _Solution<int*, int> {
+class CCSolution : public _Solution<int*, float> {
 public:
 
-    CCSolution(CCInstance *instance) : _Solution<int*, int>(0), instance(instance) {
+    CCSolution(CCInstance *instance) : _Solution<int*, float>(0.0), instance(instance) {
 
         int nClusters = instance->GetNClusters();
 
@@ -20,7 +20,7 @@ public:
 
     }
     
-    CCSolution(const CCSolution& other) : _Solution<int*, int>(other), instance(other.instance) {
+    CCSolution(const CCSolution& other) : _Solution<int*, float>(other), instance(other.instance) {
          
         int nClusters = instance->GetNClusters();
 
@@ -33,7 +33,7 @@ public:
         
     }
     
-    CCSolution(CCSolution* other) : _Solution<int*, int>(other), instance(other->instance) {
+    CCSolution(CCSolution* other) : _Solution<int*, float>(other), instance(other->instance) {
          
         int nClusters = instance->GetNClusters();
 
@@ -55,10 +55,10 @@ public:
         return _representation;
     }
 
-    int setNodo(int nodo, int value, int cluster) {
+    float setNodo(int nodo, int value, int cluster) {
         
         int nw;
-        int aux = this->clusters.at(cluster)->SetNodo(nodo, value, &nw);
+        float aux = this->clusters.at(cluster)->SetNodo(nodo, value, &nw);
         this->evaluation += aux;
         
         if(nw < this->instance->GetLowerClusterLimit()){
@@ -72,10 +72,10 @@ public:
         return aux;
     }
 
-    int SwapNodo(int nodo, int cluster) {
+    float SwapNodo(int nodo, int cluster) {
         
         int nw;
-        int aux = this->clusters.at(cluster)->SwapNodo(nodo, &nw);
+        float aux = this->clusters.at(cluster)->SwapNodo(nodo, &nw);
         this->evaluation += aux;
         
         if(nw < this->instance->GetLowerClusterLimit()){
@@ -89,16 +89,16 @@ public:
         return aux;
     }
     
-    int SwapNodo(int nodo, int cluster1, int cluster2) {
+    float SwapNodo(int nodo, int cluster1, int cluster2) {
         
         
         int aux1 = this->clusters.at(cluster1)->GetNodo(nodo);
         int aux2 = this->clusters.at(cluster2)->GetNodo(nodo);
         
         if(aux1 != aux2){
-            aux1 = SwapNodo(nodo, cluster1);
-            aux2 = SwapNodo(nodo, cluster2);
-            return aux1 + aux2;
+            float f1 = SwapNodo(nodo, cluster1);
+            float f2 = SwapNodo(nodo, cluster2);
+            return f1 + f2;
         }
         
         return 0;
@@ -134,9 +134,9 @@ public:
 
 private:
 
-    virtual int reevaluate() {
+    virtual float reevaluate() {
 
-        int ret = 0;
+        float ret = 0;
 
         std::vector<CCCluster*>::const_iterator iti;
 
