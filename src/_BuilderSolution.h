@@ -1,11 +1,14 @@
-#ifndef _INSTACEALGORITHM_H
-#define _INSTACEALGORITHM_H
+#ifndef _BUILDERSOLUTION_H
+#define _BUILDERSOLUTION_H
 
-template <class R, class V> class _InstanceAlgorithm : public _Algorithm {
+#include "_InstanceAlgorithm.h"
+
+template <class R, class V> class _BuilderSolution : public _InstanceAlgorithm<R,V> {
 public:
-    virtual ~_InstanceAlgorithm() {}
-    virtual _Solution<R, V> solve(const _Instance& instance) = 0;
+    _BuilderSolution():_InstanceAlgorithm<R,V>() {}
+    _BuilderSolution(int seed):_InstanceAlgorithm<R,V>(seed) {}
+    virtual ~_BuilderSolution() {}
 };
 
-#endif /* _INSTACEALGORITHM_H */
+#endif /* _BUILDERSOLUTION_H */
 

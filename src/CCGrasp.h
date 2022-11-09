@@ -1,58 +1,34 @@
-#ifndef _GRASP_H
-#define _GRASP_H
+#ifndef CCGRASP_H
+#define CCGRASP_H
 
-template  <class R, class V> class _Grasp : public _InstanceAlgorithm<R,V> {
+#include "_Grasp.h"
+#include "CCSolutionComparator.h"
+#include "CCSolutionDisturber.h"
+#include "CCStopCondition.h"
+#include "CCBuilderSolution.h"
+#include "CCLocalSearch.h"
+#include "_BuilderSolution.h"
+#include "_LocalSearch.h"
+#include "_SolutionComparator.h"
+#include "_SolutionDisturber.h"
+#include "_StopCondition.h"
+
+class CCGrasp : public _Grasp<int*,int> {
 public:
-    _Grasp( const _Greedy<R,V>& greedy, 
-            const _StopCondition<R,V>& stopCondition,
-            const _SolutionDisturber<R,V>& solutionDisturber,
-            const _LocalSearch<R,V>& localSearch,
-            const _SolutionComparator<_Solution<R, V>>& comparator):
-                        greedy(greedy),
-                        stopCondition(stopCondition),
-                        solutionDisturber(solutionDisturber),
-                        localSearch(localSearch),
-                        comparator(comparator){}
-                        
-    _Grasp(const _Grasp& orig):
-                        greedy(orig.greedy),
-                        stopCondition(orig.stopCondition),
-                        solutionDisturber(orig.solutionDisturber),
-                        localSearch(orig.localSearch),
-                        comparator(orig.comparator){}
+    CCGrasp( CCBuilderSolution* builderSolution, 
+            CCStopCondition* stopCondition,
+            CCSolutionDisturber* solutionDisturber,
+            CCLocalSearch* localSearch,
+            CCSolutionComparator* solutionComparator):_Grasp<int*,int>(
+                        (_BuilderSolution<int*,int>*)builderSolution,
+                        (_StopCondition<int*,int>*)stopCondition,
+                        (_SolutionDisturber<int*,int>*)solutionDisturber,
+                        (_LocalSearch<int*,int>*)localSearch,
+                        (_SolutionComparator<int*,int>*)solutionComparator){}
+                            
+    virtual ~CCGrasp(){}
     
-    virtual ~_Grasp(){}
-    
-    virtual _Solution<R, V> solve(const _Instance& instance) {
-
-        auto solution = this->greedy.solve(instance);
-        
-        while(!this->stopCondition.stop(solution)){
-            
-            auto aux = this->solutionDisturber.solve(solution);
-            
-            aux = this->localSearch.solve(aux);                       
-            
-            if(this->comparator(aux, solution)){
-                
-                solution = aux;
-                
-            }
-            
-        }
-        
-        return solution;
-
-    }
-    
-private:
-    _Greedy<R,V> greedy;
-    _SolutionDisturber<R,V> solutionDisturber;
-    _SolutionComparator<_Solution<R, V>> comparator;
-    _StopCondition<R,V> stopCondition;
-    _LocalSearch<R,V> localSearch;
-            
 };
 
-#endif /* _GRASP_H */
+#endif /* CCGRASP_H */
 

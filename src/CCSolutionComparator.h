@@ -1,11 +1,20 @@
-#ifndef _SOLUTIONCOMPARATOR_H
-#define _SOLUTIONCOMPARATOR_H
+#ifndef CCSOLUTIONCOMPARATOR_H
+#define CCSOLUTIONCOMPARATOR_H
 
-template <class R, class V>  class _SolutionComparator {
+#include "_Solution.h"
+#include "CCSolution.h"
+
+class CCSolutionComparator {
 public:
-    virtual bool operator()(_Solution<R,V>& s1, _Solution<R,V>& s2) const = 0;
-    virtual ~_SolutionComparator(){}
+    CCSolutionComparator():rate(1){}
+    CCSolutionComparator(int rate):rate(rate){}
+    virtual bool operator()(_Solution<int*,int>& s1, _Solution<int*,int>& s2) const{
+        return s1.evaluate() - (rate * ((CCSolution&)s1).GetPenalty()) > s2.evaluate() - (rate * ((CCSolution&)s2).GetPenalty());
+    }
+    virtual ~CCSolutionComparator(){}
+private:
+    int rate;
 };
 
-#endif /* _SOLUTIONCOMPARATOR_H */
+#endif /* CCSOLUTIONCOMPARATOR_H */
 

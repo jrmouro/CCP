@@ -2,37 +2,47 @@
 #define _LOCALSEARCH_H
 
 #include <vector>
-#include "_Algorithm.h"
+#include "_SolutionAlgorithm.h"
 #include "_Solution.h"
 #include "_SolutionComparator.h"
+#include "_NeighborhoodAlgorithm.h"
 
 template <class R, class V> class _LocalSearch : public _SolutionAlgorithm<R, V> {
 public:
 
-    _LocalSearch(const _SolutionComparator<_Solution<R, V>>& solutionComparator) :
+    _LocalSearch(
+            _NeighborhoodAlgorithm<R,V>* neighborhood,
+            _SolutionComparator<R, V>* solutionComparator) :
+                neighborhood(neighborhood),
                 solutionComparator(solutionComparator) {}
 
     virtual ~_LocalSearch() { }
 
-    virtual _Solution<R, V> solve(const _Solution& solution) {
+    virtual _Solution<R, V>* solve(_Solution<R, V>* solution) {
 
-        auto neighborhood = this->neighborhood();
+        auto neighborhood = this->neighborhood->solve(solution);
 
-        _Solution<R, V> ret = solution;
+        _Solution<R, V>* ret = solution;
         
         bool flag = false;
 
-        for (auto neighbor : neighborhood) {
+        for (auto neighbor : *neighborhood) {
 
-            if (this->solutionComparator(neighbor, ret)) {
+            if ((*this->solutionComparator)(*neighbor, *ret)) {
 
                 ret = neighbor;
                 
                 flag = true;
 
+            } else {
+                
+                delete neighbor;
+                
             }
 
         }
+        
+        delete neighborhood;
 
         if (flag) {
 
@@ -45,8 +55,8 @@ public:
     }
 
 protected:
-    virtual std::vector<_Solution<R, V>> neighborhood() = 0;
-    const _SolutionComparator<_Solution<R, V>>& solutionComparator;
+    _NeighborhoodAlgorithm<R,V>* neighborhood;
+    _SolutionComparator<R,V>* solutionComparator;
 
 };
 

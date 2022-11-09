@@ -97,6 +97,7 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const CCInstance& obj) {
+        os << "Filename: " << obj.filename << std::endl;
         os << "nClusters: " << obj.nClusters << std::endl;
         os << "clustersType: " << obj.clustersType << std::endl;
         os << "lowerClusterLimit: " << obj.lowerClusterLimit << std::endl;

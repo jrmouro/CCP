@@ -5,8 +5,9 @@
 
 template <class R, class V> class _StopCondition {
 public:
-    virtual ~_StopCondition();
-    virtual bool stop(const _Solution<R,V>& solution) = 0;
+    virtual ~_StopCondition(){}
+    virtual bool stop(_Solution<R,V>* solution) = 0;
+    virtual void reset() = 0;
 };
 
 #endif /* _STOPCONDITION_H */

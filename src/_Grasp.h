@@ -1,39 +1,39 @@
 #ifndef _GRASP_H
 #define _GRASP_H
 
+#include "_InstanceAlgorithm.h"
+#include "_SolutionComparator.h"
+#include "_SolutionDisturber.h"
+#include "_StopCondition.h"
+#include "_BuilderSolution.h"
+#include "_LocalSearch.h"
+
 template  <class R, class V> class _Grasp : public _InstanceAlgorithm<R,V> {
 public:
-    _Grasp( const _Greedy<R,V>& greedy, 
-            const _StopCondition<R,V>& stopCondition,
-            const _SolutionDisturber<R,V>& solutionDisturber,
-            const _LocalSearch<R,V>& localSearch,
-            const _SolutionComparator<_Solution<R, V>>& comparator):
-                        greedy(greedy),
+    _Grasp( _BuilderSolution<R,V>* builderSolution, 
+            _StopCondition<R,V>* stopCondition,
+            _SolutionDisturber<R,V>* solutionDisturber,
+            _LocalSearch<R,V>* localSearch,
+            _SolutionComparator<R, V>* solutionComparator):
+                        builderSolution(builderSolution),
                         stopCondition(stopCondition),
                         solutionDisturber(solutionDisturber),
                         localSearch(localSearch),
-                        comparator(comparator){}
-                        
-    _Grasp(const _Grasp& orig):
-                        greedy(orig.greedy),
-                        stopCondition(orig.stopCondition),
-                        solutionDisturber(orig.solutionDisturber),
-                        localSearch(orig.localSearch),
-                        comparator(orig.comparator){}
-    
+                        solutionComparator(solutionComparator){}
+                            
     virtual ~_Grasp(){}
     
-    virtual _Solution<R, V> solve(const _Instance& instance) {
+    virtual _Solution<R, V>* solve(_Instance* instance) {
 
-        auto solution = this->greedy.solve(instance);
+        auto solution = this->builderSolution->solve(instance);
         
-        while(!this->stopCondition.stop(solution)){
+        while(!this->stopCondition->stop(solution)){
             
-            auto aux = this->solutionDisturber.solve(solution);
+            auto aux = this->solutionDisturber->solve(solution);
             
-            aux = this->localSearch.solve(aux);                       
+            aux = this->localSearch->solve(aux);                       
             
-            if(this->comparator(aux, solution)){
+            if((*this->solutionComparator)(*aux, *solution)){
                 
                 solution = aux;
                 
@@ -46,11 +46,11 @@ public:
     }
     
 private:
-    _Greedy<R,V> greedy;
-    _SolutionDisturber<R,V> solutionDisturber;
-    _SolutionComparator<_Solution<R, V>> comparator;
-    _StopCondition<R,V> stopCondition;
-    _LocalSearch<R,V> localSearch;
+    _BuilderSolution<R,V>* builderSolution;
+    _SolutionDisturber<R,V>* solutionDisturber;
+    _SolutionComparator<R, V>* solutionComparator;
+    _StopCondition<R,V>* stopCondition;
+    _LocalSearch<R,V>* localSearch;
             
 };
 

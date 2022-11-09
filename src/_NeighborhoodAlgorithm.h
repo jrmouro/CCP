@@ -1,11 +1,12 @@
-#ifndef _SOLUTIONSALGORITHM_H
-#define _SOLUTIONSALGORITHM_H
+#ifndef _NEIGHBORHOODALGORITHM_H
+#define _NEIGHBORHOODALGORITHM_H
 
-template <class R, class V> class _SolutionsAlgorithm : public _Algorithm {
+#include "_SolutionsAlgorithm.h"
+
+template <class R, class V> class _NeighborhoodAlgorithm : public _SolutionsAlgorithm<R,V> {
 public:
-    virtual ~_SolutionsAlgorithm() {}
-    virtual std::vector<_Solution<R, V>> solve(const _Solution& solution) = 0;
+    virtual ~_NeighborhoodAlgorithm() {}
 };
 
-#endif /* _SOLUTIONSALGORITHM_H */
+#endif /* _NEIGHBORHOODALGORITHM_H */
 
