@@ -17,31 +17,32 @@ public:
 
         CCInstance *ccinstance = (CCInstance*) instance;
         CCSolution *ret = new CCSolution(ccinstance);
-        int lower = ccinstance->GetLowerClusterLimit();
-        int upper = ccinstance->GetUpperClusterLimit();
         int nCluster = ccinstance->GetNClusters();
         std::vector<int> wCluster(nCluster, 0);
         int cMin = 0;
         std::vector<bool> minCluster(nCluster, false);
+        int roulette = 0;
 
         ccinstance->GetGraph()->ListNodos(
 
-                [&cMin, &minCluster, nCluster, &wCluster, lower, upper, &ret](int nodo, int weight) {
+                [&roulette, &cMin, &minCluster, nCluster, &wCluster, &ret, ccinstance](int nodo, int weight) { // para cada nó
                     
-                    for (int i = 0; i < nCluster; i++) {
+                    bool flag = false; // para saber se o nó foi alocado segundo a heurística
+                    
+                    for (int i = 0; i < nCluster; i++) { // percorro todos os clusters
 
-                        if (cMin < nCluster) {
+                        if (cMin < nCluster) { // se ainda existe cluster que não atigiu o limite mínimo
 
-                            if (minCluster.at(i)) {
+                            if (minCluster.at(i)) { // vou buscar o primeiro cluster que não atingiu
                                 
                                 continue;
                                 
-                            } else {
+                            } else { // e aloco o nó nele
 
                                 
                                 wCluster.at(i) = wCluster.at(i) + weight;
                                 
-                                if(wCluster.at(i) >= lower){
+                                if(wCluster.at(i) >= ccinstance->GetLowerClusterLimit(i)){
                                     
                                     minCluster.at(i) = true;
                                     cMin++;
@@ -49,18 +50,22 @@ public:
                                 }
                                 
                                 ret->setNodo(nodo, 1, i);
+                                
+                                flag = true;
 
                                 break;
                             }
 
-                        } else {
+                        } else { // se todos os clusters atingiram o limite mínimo
 
                             int aux = wCluster.at(i) + weight;
 
-                            if (aux <= upper) {
+                            if (aux <= ccinstance->GetUpperClusterLimit(i)) { // vou buscar o primeiro cluster que é compatível para alocação em relação ao limite máximo
 
                                 wCluster.at(i) = aux;
                                 ret->setNodo(nodo, 1, i);
+                                
+                                flag = true;
 
                                 break;
 
@@ -73,6 +78,21 @@ public:
                         }
 
                     }
+                    
+                    if(!flag){ // se o nó não foi allocado ainda, ele o será em um cluster segundo a roleta
+                        
+                        ret->setNodo(nodo, 1, roulette);
+                        
+                        roulette++;
+                                
+                        if(roulette == nCluster){
+                            
+                            roulette = 0;
+
+                        }
+                        
+                    }
+                    
                 });
 
         return ret;

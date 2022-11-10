@@ -18,15 +18,18 @@ public:
         for (int i = 0; i < size; i++) {
 
             this->nodosWeight[i] = 0;
-            this->adjMatrix[i] = new float(size);
+            this->adjMatrix[i] = new float[size];
 
             for (int j = 0; j < size; j++) {
 
-                this->adjMatrix[i][j] = 0;
+                this->adjMatrix[i][j] = 0.0;
 
             }
 
         }
+        
+        int i = 0;
+        i++;
 
     }
     

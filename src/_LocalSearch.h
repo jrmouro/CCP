@@ -13,41 +13,43 @@ public:
     _LocalSearch(
             _NeighborhoodAlgorithm<R,V>* neighborhood,
             _SolutionComparator<R, V>* solutionComparator) :
-                neighborhood(neighborhood),
+                neighborhoodAlgorithm(neighborhood),
                 solutionComparator(solutionComparator) {}
 
     virtual ~_LocalSearch() { }
 
     virtual _Solution<R, V>* solve(_Solution<R, V>* solution) {
-
-        auto neighborhood = this->neighborhood->solve(solution);
-
+        
         _Solution<R, V>* ret = solution;
         
-        bool flag = false;
+        bool flag = true;
+        
+        while(flag){
+            
+            auto neighborhood = this->neighborhoodAlgorithm->solve(ret);
 
-        for (auto neighbor : *neighborhood) {
+            flag = false;
+            
+            for (auto neighbor : *neighborhood) {
 
-            if ((*this->solutionComparator)(*neighbor, *ret)) {
+                if ((*this->solutionComparator)(*neighbor, *ret)) {
 
-                ret = neighbor;
-                
-                flag = true;
+                    if(ret != solution) delete ret;
 
-            } else {
-                
-                delete neighbor;
-                
+                    ret = neighbor;
+                    
+                    flag = true;
+
+                } else {
+
+                    delete neighbor;
+
+                }
+
             }
 
-        }
-        
-        delete neighborhood;
-
-        if (flag) {
-
-            return this->solve(ret);
-
+            delete neighborhood;
+                    
         }
 
         return ret;
@@ -55,7 +57,7 @@ public:
     }
 
 protected:
-    _NeighborhoodAlgorithm<R,V>* neighborhood;
+    _NeighborhoodAlgorithm<R,V>* neighborhoodAlgorithm;
     _SolutionComparator<R,V>* solutionComparator;
 
 };

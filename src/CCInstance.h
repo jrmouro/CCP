@@ -24,14 +24,25 @@ public:
 
             readFile >> this->nClusters;
             readFile >> clustersType;
-            readFile >> this->lowerClusterLimit;
-            readFile >> this->upperClusterLimit;
+            
+            this->lowerClusterLimit = new int[this->nClusters];
+            this->upperClusterLimit = new int[this->nClusters];
+            
+            for (int i = 0; i < this->nClusters; i++) {
+                
+                readFile >> this->lowerClusterLimit[i];
+                readFile >> this->upperClusterLimit[i];
+                
+            }
+            
+            
             readFile >> gambiarra; // read W
 
             for (int i = 0; i < size; i++) {
                 int w;
                 readFile >> w;
                 graph->SetNodo(i, w);
+                weight += w;
             }
 
             getline(readFile, line);
@@ -65,6 +76,8 @@ public:
     virtual ~CCInstance() {
 
         if (graph != nullptr) delete graph;
+        if(lowerClusterLimit != nullptr) delete [] lowerClusterLimit;
+        if(upperClusterLimit != nullptr) delete [] upperClusterLimit;
 
     }
 
@@ -72,12 +85,16 @@ public:
         return clustersType;
     }
 
-    int GetLowerClusterLimit() const {
-        return lowerClusterLimit;
+    int GetLowerClusterLimit(int indexCluster) const {
+        return lowerClusterLimit[indexCluster];
     }
 
     int GetNClusters() const {
         return nClusters;
+    }
+    
+    int GetWeight() const {
+        return weight;
     }
 
     int GetSize() const {
@@ -85,8 +102,8 @@ public:
         return 0;
     }
 
-    int GetUpperClusterLimit() const {
-        return upperClusterLimit;
+    int GetUpperClusterLimit(int indexCluster) const {
+        return upperClusterLimit[indexCluster];
     }
 
     CCGraph* GetGraph() const {
@@ -99,10 +116,17 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const CCInstance& obj) {
         os << "Filename: " << obj.filename << std::endl;
+        os << "weight: " << obj.weight << std::endl;
         os << "nClusters: " << obj.nClusters << std::endl;
         os << "clustersType: " << obj.clustersType << std::endl;
-        os << "lowerClusterLimit: " << obj.lowerClusterLimit << std::endl;
-        os << "upperClusterLimit: " << obj.upperClusterLimit << std::endl;
+        os << "Limits: ";
+        int i = 0;
+        for(; i < obj.nClusters - 1; i++){
+            os << obj.lowerClusterLimit[i];
+            os << " " << obj.upperClusterLimit[i] << " - ";
+        }
+        os << obj.lowerClusterLimit[i];
+        os << " " << obj.upperClusterLimit[i] << std::endl;
         os << "graph:" << std::endl;
         os << *obj.graph;
         return os;
@@ -110,11 +134,10 @@ public:
 
 private:
     std::string filename;
-    int nClusters = 0;
+    int nClusters = 0, weight = 0;
     std::string clustersType; // 0 -> ss, i -> ds
-    int lowerClusterLimit;
-    int upperClusterLimit;
-
+    int *lowerClusterLimit = nullptr;
+    int *upperClusterLimit = nullptr;
     CCGraph* graph = nullptr;
 
 };

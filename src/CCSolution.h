@@ -8,7 +8,7 @@
 class CCSolution : public _Solution<int*, float> {
 public:
 
-    CCSolution(CCInstance *instance) : _Solution<int*, float>(0.0), instance(instance) {
+    CCSolution(CCInstance *instance) : _Solution<int*, float>(0.0), instance(instance), penalty(0) {
 
         int nClusters = instance->GetNClusters();
 
@@ -20,7 +20,7 @@ public:
 
     }
     
-    CCSolution(const CCSolution& other) : _Solution<int*, float>(other), instance(other.instance) {
+    CCSolution(const CCSolution& other) : _Solution<int*, float>(other), instance(other.instance), penalty(other.penalty) {
          
         int nClusters = instance->GetNClusters();
 
@@ -33,7 +33,7 @@ public:
         
     }
     
-    CCSolution(CCSolution* other) : _Solution<int*, float>(other), instance(other->instance) {
+    CCSolution(CCSolution* other) : _Solution<int*, float>(other), instance(other->instance), penalty(other->penalty) {
          
         int nClusters = instance->GetNClusters();
 
@@ -49,6 +49,10 @@ public:
 
     virtual ~CCSolution() {
         if (_representation != nullptr) delete [] _representation;
+        for(auto c : clusters){
+            delete c;
+        }
+            
     }
 
     virtual int* representation() const {
@@ -61,15 +65,24 @@ public:
         float aux = this->clusters.at(cluster)->SetNodo(nodo, value, &nw);
         this->evaluation += aux;
         
-        if(nw < this->instance->GetLowerClusterLimit()){
-            this->penaltyClusters.at(cluster) = this->instance->GetLowerClusterLimit() - nw;
-        } else if(nw > this->instance->GetUpperClusterLimit()){
-            this->penaltyClusters.at(cluster) = nw - this->instance->GetUpperClusterLimit();
-        }else{
-            this->penaltyClusters.at(cluster) = 0;
+        int cPenalty = 0;
+        
+        if(nw < this->instance->GetLowerClusterLimit(cluster)){
+            
+            cPenalty = this->instance->GetLowerClusterLimit(cluster) - nw;
+            
+        } else if(nw > this->instance->GetUpperClusterLimit(cluster)){
+            
+            cPenalty = nw - this->instance->GetUpperClusterLimit(cluster);
+            
         }
         
+        this->penalty += cPenalty - this->penaltyClusters.at(cluster);
+        
+        this->penaltyClusters.at(cluster) = cPenalty;
+        
         return aux;
+        
     }
 
     float SwapNodo(int nodo, int cluster) {
@@ -78,13 +91,21 @@ public:
         float aux = this->clusters.at(cluster)->SwapNodo(nodo, &nw);
         this->evaluation += aux;
         
-        if(nw < this->instance->GetLowerClusterLimit()){
-            this->penaltyClusters.at(cluster) = this->instance->GetLowerClusterLimit() - nw;
-        } else if(nw > this->instance->GetUpperClusterLimit()){
-            this->penaltyClusters.at(cluster) = nw - this->instance->GetUpperClusterLimit();
-        }else{
-            this->penaltyClusters.at(cluster) = 0;
+        int cPenalty = 0;
+        
+        if(nw < this->instance->GetLowerClusterLimit(cluster)){
+            
+            cPenalty = this->instance->GetLowerClusterLimit(cluster) - nw;
+            
+        } else if(nw > this->instance->GetUpperClusterLimit(cluster)){
+            
+            cPenalty = nw - this->instance->GetUpperClusterLimit(cluster);
+            
         }
+        
+        this->penalty += cPenalty - this->penaltyClusters.at(cluster);
+        
+        this->penaltyClusters.at(cluster) = cPenalty;
         
         return aux;
     }
@@ -124,12 +145,13 @@ public:
         return instance;
     }
 
-    int GetPenalty()const{
-        int ret = 0;
-        for(int p:penaltyClusters){
-            ret += p;
-        }
-        return ret;
+    float GetPenalty()const{
+//        int ret = 0;
+//        for(int p:penaltyClusters){
+//            ret += p;
+//        }
+//        return ret;
+        return (float)penalty/(float)instance->GetWeight();
     }
 
 private:
@@ -163,6 +185,7 @@ private:
     int* _representation = nullptr;
     CCInstance *instance;
     std::vector<int> penaltyClusters;
+    int penalty = 0;
 
 };
 

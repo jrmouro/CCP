@@ -31,11 +31,16 @@ public:
             
             auto aux = this->solutionDisturber->solve(solution);
             
-            aux = this->localSearch->solve(aux);                       
+            auto aux2 = this->localSearch->solve(aux); 
             
-            if((*this->solutionComparator)(*aux, *solution)){
+            if(aux != aux2){
+                delete aux;
+            }
+            
+            if((*this->solutionComparator)(*aux2, *solution)){
                 
-                solution = aux;
+                delete solution;
+                solution = aux2;
                 
             }
             

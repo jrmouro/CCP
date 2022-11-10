@@ -2,6 +2,7 @@
 #define CCNEIGHBORHOOD_H
 
 #include <vector>
+#include <iostream>
 #include "_NeighborhoodAlgorithm.h"
 #include "_Solution.h"
 #include "CCSolution.h"
@@ -18,6 +19,7 @@ public:
         int size = ccSolution->GetInstance()->GetSize();
 
         std::vector<_Solution<int *, float> *> *ret = new std::vector<_Solution<int *, float> *>();
+        ret->reserve(size*nClusters*nClusters);
 
         for (int n = 0; n < size; n++){
 
@@ -27,9 +29,9 @@ public:
 
                     auto s = new CCSolution(ccSolution);
 
-                    int aux = s->SwapNodo(n, i, j);
+                    float aux = s->SwapNodo(n, i, j);
 
-                    if (aux != 0){
+                    if (aux != 0.0){
                         ret->push_back(s);
                     }else{
                         delete s;
@@ -40,6 +42,7 @@ public:
         }
 
         return ret;
+        
     }
 };
 

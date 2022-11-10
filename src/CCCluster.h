@@ -15,13 +15,13 @@ public:
         
     CCCluster(const CCCluster& other) : 
         _Evaluable<float>(other),
-        nodoWeight(other.nodoWeight),
+        totalNodoWeight(other.totalNodoWeight),
         graph(other.graph), 
         representation(other.representation) { }
 
     CCCluster(CCCluster* other) : 
         _Evaluable<float>(other),
-        nodoWeight(other->nodoWeight),
+        totalNodoWeight(other->totalNodoWeight),
         graph(other->graph),            
         representation(other->representation) { }
 
@@ -67,11 +67,11 @@ public:
 
             this->evaluation += s;
             
-            this->nodoWeight += this->graph->NodoWeight(nodo);
+            this->totalNodoWeight += this->graph->NodoWeight(nodo);
                         
         }
         
-        *nodoWeight = this->nodoWeight;
+        *nodoWeight = this->totalNodoWeight;
         
         return s;
 
@@ -118,12 +118,12 @@ public:
 
             this->evaluation -= s;
             
-            this->nodoWeight -= this->graph->NodoWeight(nodo);
+            this->totalNodoWeight -= this->graph->NodoWeight(nodo);
             
 
         }
         
-        *nodoWeight = this->nodoWeight;
+        *nodoWeight = this->totalNodoWeight;
         
         return -s;
 
@@ -138,13 +138,13 @@ public:
     }
     
     int GetNodoWeight() const {
-        return nodoWeight;
+        return totalNodoWeight;
     }
 
 
 private:
 
-    int nodoWeight = 0;
+    int totalNodoWeight = 0;
     CCGraph *graph;
     std::vector<int> representation;
     
