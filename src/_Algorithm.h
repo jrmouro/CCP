@@ -25,7 +25,7 @@ public:
     int GetRandomValue(int offset, int range){
         srand(seed); 
         int ret = offset + rand()%range;
-        seed +=ret;
+        seed = seed * ret + ret * ret;
         return ret;        
     }
 

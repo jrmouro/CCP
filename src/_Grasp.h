@@ -1,6 +1,7 @@
 #ifndef _GRASP_H
 #define _GRASP_H
 
+#include <iostream>
 #include "_InstanceAlgorithm.h"
 #include "_SolutionComparator.h"
 #include "_SolutionDisturber.h"
@@ -27,6 +28,8 @@ public:
 
         auto solution = this->builderSolution->solve(instance);
         
+        int i = 0;
+        
         while(!this->stopCondition->stop(solution)){
             
             auto aux = this->solutionDisturber->solve(solution);
@@ -43,6 +46,8 @@ public:
                 solution = aux2;
                 
             }
+            
+            std::cout << i++ << ": " << solution->evaluate() << std::endl;
             
         }
         
