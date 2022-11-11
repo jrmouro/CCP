@@ -7,13 +7,13 @@
 class CCStopCondition : public _StopCondition<int*,float>{
 public:
     
-    CCStopCondition(int nIterations):nIterations(nIterations){}
+    CCStopCondition(float literature_solution, float threshold):_threshold(threshold), _literature_solution(literature_solution){}
     
     virtual ~CCStopCondition(){}
     
     virtual bool stop(_Solution<int*,float>* solution){        
-        current++;             
-        return !(current < nIterations);        
+        const float evaluation = solution->GetEvaluation();
+        return evaluation >= (_literature_solution * _threshold);       
     }
     
     virtual void reset(){        
@@ -21,6 +21,8 @@ public:
     }
 private:
     int nIterations, current = 0;
+    float _literature_solution;
+    float _threshold;
 };
 
 #endif /* CCSTOPCONDITION_H */
