@@ -11,9 +11,8 @@ public:
     
     virtual ~CCStopCondition(){}
     
-    virtual bool stop(_Solution<int*,float>* solution){        
-        current++;             
-        return !(current < nIterations);        
+    virtual bool stop(_Solution<int*,float>* solution){    
+        return !(current++ < nIterations);        
     }
     
     virtual void reset(){        
@@ -24,4 +23,6 @@ private:
 };
 
 #endif /* CCSTOPCONDITION_H */
+
+
 

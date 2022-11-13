@@ -1,27 +1,24 @@
-#ifndef CCSTOPCONDITION_H
-#define CCSTOPCONDITION_H
+#ifndef CCSTOPCONDITION_THRESHOLD_H
+#define CCSTOPCONDITION_THRESHOLD_H
 
-#include "_StopCondition.h"
+#include "CCStopCondition.h"
 #include "_Solution.h"
 
-class CCStopCondition : public _StopCondition<int*,float>{
+class CCStopCondition_Threshold : public CCStopCondition{
 public:
     
-    CCStopCondition(int nIterations):nIterations(nIterations){}
+    CCStopCondition_Threshold(float threshold, int nIterations):threshold(threshold), CCStopCondition(nIterations){}
     
-    virtual ~CCStopCondition(){}
+    virtual ~CCStopCondition_Threshold(){}
     
     virtual bool stop(_Solution<int*,float>* solution){        
-        current++;             
-        return !(current < nIterations);        
+        auto aux =  CCStopCondition::stop(solution);
+        return aux || solution->evaluate() > this->threshold;        
     }
     
-    virtual void reset(){        
-        current = 0;        
-    }
+    
 private:
-    int nIterations, current = 0;
+    const float threshold;
 };
 
-#endif /* CCSTOPCONDITION_H */
-
+#endif /* CCSTOPCONDITION_THRESHOLD_H */

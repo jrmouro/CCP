@@ -146,16 +146,9 @@ public:
     }
 
     float GetPenalty()const{
-//        int ret = 0;
-//        for(int p:penaltyClusters){
-//            ret += p;
-//        }
-//        return ret;
         return (float)penalty/(float)instance->GetWeight();
     }
-
-private:
-
+    
     virtual float reevaluate() {
 
         float ret = 0;
@@ -173,6 +166,9 @@ private:
         return ret;
 
     }
+    
+private:
+    
 
     /*
      * Representation

@@ -140,36 +140,31 @@ public:
     int GetNodoWeight() const {
         return totalNodoWeight;
     }
+    
+    float reevaluate() {
 
+        float ret = 0;
+        
+        for(int i = 0; i < representation.size(); i++){
+            if(representation.at(i) == 1)
+                for(int j = 0; j < representation.size(); j++){
+                    if(representation.at(j) == 1)
+                        ret += this->graph->EdgeWeight(i, j);
+                }
+        }
 
+        return ret;
+
+    }
+
+    
 private:
 
     int totalNodoWeight = 0;
     CCGraph *graph;
     std::vector<int> representation;
     
-    float reevaluate() {
-
-        float ret = 0;
-
-        std::vector<int>::iterator iti;
-        for (iti = representation.begin(); iti != representation.end(); ++iti) {
-            int i = *iti;
-            if (i == 1) {
-                std::vector<int>::iterator itj;
-                for (itj = representation.begin(); itj != representation.end(); ++itj) {
-                    int j = *itj;
-                    if (j == 1) {
-                        ret += this->graph->EdgeWeight(i, j);
-                    }
-
-                }
-            }
-        }
-
-        return ret;
-
-    }
+    
 
 };
 
