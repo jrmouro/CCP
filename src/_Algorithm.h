@@ -22,7 +22,7 @@ public:
         this->seed = seed;
     }
     
-    int GetRandomValue(int offset, int range){
+    virtual int GetRandomValue(int offset, int range){
         srand(seed); 
         int ret = offset + rand()%range;
         seed = seed * ret + ret * ret;

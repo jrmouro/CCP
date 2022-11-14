@@ -9,7 +9,7 @@
 #include "_BuilderSolution.h"
 #include "_LocalSearch.h"
 
-template  <class R, class V> class _Grasp : public _InstanceAlgorithm<R,V> {
+template  <class R, class V> class _Grasp : public _InstanceAlgorithm<R,V>, public _SolutionAlgorithm<R,V>  {
 public:
     _Grasp( _BuilderSolution<R,V>* builderSolution, 
             _StopCondition<R,V>* stopCondition,
@@ -24,15 +24,15 @@ public:
                             
     virtual ~_Grasp(){}
     
-    virtual _Solution<R, V>* solve(_Instance* instance) {
-
-        auto solution = this->builderSolution->solve(instance);
+    virtual _Solution<R, V>* solve(_Solution<R,V>* solution) {
+        
+        auto ret = solution;
         
         int i = 0;
         
-        while(!this->stopCondition->stop(solution)){
+        while(!this->stopCondition->stop(ret)){
             
-            auto aux = this->solutionDisturber->solve(solution);
+            auto aux = this->solutionDisturber->solve(ret);
             
             auto aux2 = this->localSearch->solve(aux); 
             
@@ -42,16 +42,31 @@ public:
             
             if((*this->solutionComparator)(*aux2, *solution)){
                 
-                delete solution;
-                solution = aux2;
+                if(ret != solution){
+                    delete ret;
+                }
+                
+                ret = aux2;
                 
             }
             
-            std::cout << i++ << ": " << solution->evaluate() << std::endl;
+            std::cout << i++ << ": " << ret->evaluate() << std::endl;
             
         }
         
-        return solution;
+        return ret;
+        
+    }
+    
+    virtual _Solution<R, V>* solve(_Instance* instance) {
+
+        auto solution = this->builderSolution->solve(instance);
+        
+        auto ret = this->solve(solution);
+                
+        if(ret != solution) delete solution;
+        
+        return ret;
 
     }
     

@@ -19,7 +19,7 @@ class CCSolutionDisturber: public _SolutionDisturber<int*, float>{
         
         for(int z = 0; z < repeat; z++){
             
-            int n = this->GetRandomValue(0, size);
+            int n = GetRandomValue(0, size);
             int i = this->GetRandomValue(0, nClusters);
             int j = this->GetRandomValue(0, nClusters);
             

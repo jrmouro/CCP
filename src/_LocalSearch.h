@@ -26,7 +26,7 @@ public:
         
         while(flag){
             
-            auto neighborhood = this->neighborhoodAlgorithm->solve(ret);
+            auto neighborhood = this->neighborhoodAlgorithm->solvev(ret);
 
             flag = false;
             

@@ -9,7 +9,7 @@ public:
     _SolutionsAlgorithm():_Algorithm() {}
     _SolutionsAlgorithm(int seed):_Algorithm(seed) {}
     virtual ~_SolutionsAlgorithm() {}
-    virtual std::vector<_Solution<R, V>*>* solve(_Solution<R,V>* solution) = 0;
+    virtual std::vector<_Solution<R, V>*>* solvev(_Solution<R,V>* solution) = 0;
 };
 
 #endif /* _SOLUTIONSALGORITHM_H */

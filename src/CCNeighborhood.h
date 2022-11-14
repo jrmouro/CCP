@@ -12,7 +12,7 @@ public:
     
     virtual ~CCNeighborhood() {}
 
-    virtual std::vector<_Solution<int *, float> *> *solve(_Solution<int *, float> *solution){
+    virtual std::vector<_Solution<int *, float> *> *solvev(_Solution<int *, float> *solution){
 
         CCSolution *ccSolution = (CCSolution *)solution;
         int nClusters = ccSolution->GetInstance()->GetNClusters();
