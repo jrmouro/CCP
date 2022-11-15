@@ -28,7 +28,7 @@ public:
         
         auto ret = solution;
         
-        int i = 0;
+        int i = 0; // eliminar
         
         while(!this->stopCondition->stop(ret)){
             
@@ -40,7 +40,7 @@ public:
                 delete aux;
             }
             
-            if((*this->solutionComparator)(*aux2, *solution)){
+            if((*this->solutionComparator)(*aux2, *ret)){
                 
                 if(ret != solution){
                     delete ret;
@@ -48,9 +48,13 @@ public:
                 
                 ret = aux2;
                 
+            } else {
+                
+                delete aux2;
+                
             }
             
-            std::cout << i++ << ": " << ret->evaluate() << std::endl;
+            std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
             
         }
         
@@ -70,7 +74,7 @@ public:
 
     }
     
-private:
+protected:
     _BuilderSolution<R,V>* builderSolution;
     _SolutionDisturber<R,V>* solutionDisturber;
     _SolutionComparator<R, V>* solutionComparator;

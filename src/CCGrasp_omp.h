@@ -1,7 +1,7 @@
-#ifndef CCGRASP_H
-#define CCGRASP_H
+#ifndef CCGRASP_OMP_H
+#define CCGRASP_OMP_H
 
-#include "_Grasp.h"
+#include "_Grasp_omp.h"
 #include "CCSolutionComparator.h"
 #include "CCSolutionDisturber.h"
 #include "CCStopCondition.h"
@@ -13,22 +13,25 @@
 #include "_SolutionDisturber.h"
 #include "_StopCondition.h"
 
-class CCGrasp : public _Grasp<int*,float> {
+class CCGrasp_omp : public _Grasp_omp<int*,float> {
 public:
-    CCGrasp( CCBuilderSolution* builderSolution, 
+    CCGrasp_omp( 
+            unsigned numThreads,
+            CCBuilderSolution* builderSolution, 
             CCStopCondition* stopCondition,
             CCSolutionDisturber* solutionDisturber,
             CCLocalSearch* localSearch,
-            CCSolutionComparator* solutionComparator):_Grasp<int*,float>(
+            CCSolutionComparator* solutionComparator):_Grasp_omp<int*,float>(
+                        numThreads,
                         (_BuilderSolution<int*,float>*)builderSolution,
                         (_StopCondition<int*,float>*)stopCondition,
                         (_SolutionDisturber<int*,float>*)solutionDisturber,
                         (_LocalSearch<int*,float>*)localSearch,
                         (_SolutionComparator<int*,float>*)solutionComparator){}
                             
-    virtual ~CCGrasp(){}
+    virtual ~CCGrasp_omp(){}
     
 };
 
-#endif /* CCGRASP_H */
+#endif /* CCGRASP_OMP_H */
 
