@@ -13,8 +13,10 @@ public:
             _Estochastic_Solution_Algorithm<V>(other),
             amount(other.amount) { }
     virtual ~_Estochastic_Solutions_Algorithm() {}
+    
+    
     virtual std::vector<_Solution<V>*>* solvev(const _Solution<V>& solution) {
-        auto ret = new std::vector<_Solution<V>*>(this->amount);
+        auto ret = new std::vector<_Solution<V>*>();
         for(int i = 0; i < this->amount; i++)
             ret->push_back(this->solve(solution));
         return ret;

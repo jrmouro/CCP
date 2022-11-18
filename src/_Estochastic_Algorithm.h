@@ -24,7 +24,7 @@ public:
     virtual int NextRandomInt(int offset, int range){
         srand(seed); 
         int ret = offset + rand()%range;
-        seed = seed * ret + ret * ret;
+        seed = rand();
         return ret;        
     }
     

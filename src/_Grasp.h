@@ -62,6 +62,8 @@ public:
         
         while(!this->stopCondition.stop(*ret)){
             
+            this->solutionDisturber.reset();
+            
             auto aux = this->solutionDisturber.solve(*ret);
             
             auto aux2 = this->localSearch.solve(*aux);  

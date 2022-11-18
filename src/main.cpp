@@ -24,25 +24,25 @@ int main(int argc, char** argv) {
     CCBuilderSolution bs;
     CCLocalSearch ls(ne, sc);
     CCLocalSearch_omp lsomp(8, ne, sc);
-    CCSolutionDisturber sd(SEED,1,.1);
-    CCStopCondition_Threshold stc(210000.0, 1000);
+    CCSolutionDisturber sd(.2, .01, 1, SEED);
+    CCStopCondition_Threshold stc(150000.0, 1000);
     CCGrasp g(SEED, bs, stc,  sd, ls, sc);
 //    CCGrasp g2(SEED, bs, stc,  sd, lsomp, sc);
     CCGrasp_omp gomp(4, SEED, bs, stc,  sd, ls, sc);
     
     auto s = bs.solve(i);
 //    auto sls = ls.solve(*s);
-    auto sls = lsomp.solve(*s);
-//    auto sg = g2.solve(*s);
+//    auto sls = lsomp.solve(*s);
+    auto sg = g.solve(*s);
 //    auto sg = gomp.solve(*s);
     
     std::cout << *(CCSolution*)s << std::endl;
 //    std::cout << *(CCSolution*)ds << std::endl;
-    std::cout << *(CCSolution*)sls << std::endl;
-//    std::cout << *(CCSolution*)sg << std::endl;
+//    std::cout << *(CCSolution*)sls << std::endl;
+    std::cout << *(CCSolution*)sg << std::endl;
     
-//    delete sg;
-    delete sls;
+    delete sg;
+//    delete sls;
 //    delete ds;
     delete s;
     return 0;
