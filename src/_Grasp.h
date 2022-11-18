@@ -61,9 +61,7 @@ public:
         int i = 0; // eliminar
         
         while(!this->stopCondition.stop(*ret)){
-            
-            this->solutionDisturber.reset();
-            
+                                    
             auto aux = this->solutionDisturber.solve(*ret);
             
             auto aux2 = this->localSearch.solve(*aux);  
@@ -79,6 +77,8 @@ public:
             } else {
                 
                 delete aux2;
+                
+                this->solutionDisturber.reset();
                 
             }
             

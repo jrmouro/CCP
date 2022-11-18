@@ -108,6 +108,9 @@ public:
             
         }
         
+        std::cout << "ret: " << ret->evaluate() << std::endl; // eliminar
+                    
+        
         return ret;
         
     }
