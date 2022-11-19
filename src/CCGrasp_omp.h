@@ -18,7 +18,6 @@ public:
     CCGrasp_omp( 
             unsigned numThreads,
             unsigned seed,
-            CCBuilderSolution& builderSolution, 
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
             const CCLocalSearch& localSearch,
@@ -26,7 +25,6 @@ public:
                     _Grasp_omp<float>(
                         numThreads,
                         seed,
-                        (_Builder_Solution<float>&)builderSolution,
                         (_Stop_Condition<float>&)stopCondition,
                         (_Solution_Disturber<float>&)solutionDisturber,
                         (const _Local_Search<float>&)localSearch,
@@ -34,14 +32,12 @@ public:
     
     CCGrasp_omp( 
             unsigned numThreads,
-            CCBuilderSolution& builderSolution, 
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
             const CCLocalSearch& localSearch,
             const CCSolutionComparator& solutionComparator):
                     _Grasp_omp<float>(
                         numThreads,
-                        (_Builder_Solution<float>&)builderSolution,
                         (_Stop_Condition<float>&)stopCondition,
                         (_Solution_Disturber<float>&)solutionDisturber,
                         (const _Local_Search<float>&)localSearch,

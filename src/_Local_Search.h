@@ -49,6 +49,8 @@ public:
                     ret = neighbor;
                     
                     flag = true;
+                    
+                    std::cout << "ls: " << ret->evaluate() << std::endl; // eliminar
 
                 } else {
                     

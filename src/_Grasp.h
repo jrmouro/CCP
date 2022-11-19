@@ -3,48 +3,43 @@
 
 
 #include <iostream>
-#include "_Instance_Algorithm.h"
+#include "_Estochastic_Solution_Algorithm.h"
 #include "_Solution_Comparator.h"
 #include "_Solution_Disturber.h"
 #include "_Stop_Condition.h"
 #include "_Builder_Solution.h"
 #include "_Local_Search.h"
 
-template  <class V> class _Grasp : public _Instance_Algorithm<V> {
+template  <class V> class _Grasp : public _Estochastic_Solution_Algorithm<V> {
 public:
     
-    _Grasp( _Builder_Solution<V>& builderSolution, 
-            _Stop_Condition<V>& stopCondition,
+    _Grasp( _Stop_Condition<V>& stopCondition,
             _Solution_Disturber<V>& solutionDisturber,
             const _Local_Search<V>& localSearch,
             const _Solution_Comparator<V>& solutionComparator):
-                        _Instance_Algorithm<V>(),
-                        builderSolution(builderSolution),
+                        _Estochastic_Solution_Algorithm<V>(),
                         stopCondition(stopCondition),
                         solutionDisturber(solutionDisturber),
                         localSearch(localSearch),
                         solutionComparator(solutionComparator){}
+                        
     _Grasp( unsigned seed,
-            _Builder_Solution<V>& builderSolution, 
             _Stop_Condition<V>& stopCondition,
             _Solution_Disturber<V>& solutionDisturber,
             const _Local_Search<V>& localSearch,
             const _Solution_Comparator<V>& solutionComparator):
-                        _Instance_Algorithm<V>(seed),
-                        builderSolution(builderSolution),
+                        _Estochastic_Solution_Algorithm<V>(seed),
                         stopCondition(stopCondition),
                         solutionDisturber(solutionDisturber),
                         localSearch(localSearch),
                         solutionComparator(solutionComparator){
     
-        this->builderSolution.SetSeed(this->GetSeed());
         this->solutionDisturber.SetSeed(this->GetSeed());
         
     }
     
     _Grasp(const _Grasp<V>& other) :
-            _Instance_Algorithm<V>(other),
-            builderSolution(other.builderSolution), 
+            _Estochastic_Solution_Algorithm<V>(other), 
             solutionDisturber(other.solutionDisturber), 
             solutionComparator(other.solutionComparator), 
             stopCondition(other.stopCondition), 
@@ -74,6 +69,8 @@ public:
                 
                 ret = aux2;
                 
+                std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
+                
             } else {
                 
                 delete aux2;
@@ -82,7 +79,6 @@ public:
                 
             }
             
-            std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
             
         }
         
@@ -90,24 +86,12 @@ public:
         
     }
     
-    virtual _Solution<V>* solve(const _Instance& instance) {
-
-        auto solution = this->builderSolution.solve(instance);
-        
-        auto ret = this->solve(*solution);
-        
-        delete solution;
-        
-        return ret;
-
-    }
     
     virtual _Grasp* clone(){
         return new _Grasp(*this);
     }
     
 protected:
-    _Builder_Solution<V>& builderSolution;
     _Solution_Disturber<V>& solutionDisturber;
     const _Solution_Comparator<V>& solutionComparator;
     _Stop_Condition<V>& stopCondition;

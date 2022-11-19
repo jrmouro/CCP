@@ -14,14 +14,12 @@ template  <class V> class _Grasp_omp : public _Grasp<V> {
 public:
     
     _Grasp_omp( 
-            unsigned numThreads,
-            _Builder_Solution<V>& builderSolution, 
+            unsigned numThreads, 
             _Stop_Condition<V>& stopCondition,
             _Solution_Disturber<V>& solutionDisturber,
             const _Local_Search<V>& localSearch,
             const _Solution_Comparator<V>& solutionComparator):                        
                         _Grasp<V>(
-                            builderSolution,
                             stopCondition,
                             solutionDisturber,
                             localSearch,
@@ -35,7 +33,6 @@ public:
     _Grasp_omp( 
             unsigned numThreads,
             unsigned seed,
-            _Builder_Solution<V>& builderSolution, 
             _Stop_Condition<V>& stopCondition,
             _Solution_Disturber<V>& solutionDisturber,
             const _Local_Search<V>& localSearch,
@@ -43,14 +40,11 @@ public:
                         numThreads(numThreads),
                         _Grasp<V>(
                             seed,
-                            builderSolution,
                             stopCondition,
                             solutionDisturber,
                             localSearch,
                             solutionComparator){
     
-        this->builderSolution.SetSeed(this->GetSeed());
-        this->solutionDisturber.SetSeed(this->GetSeed());
         this->solutionDisturber.SetAmount(numThreads);
         
     }
@@ -104,6 +98,10 @@ public:
 
             }
             
+//            #pragma omp barrier
+//
+//            std::cout << "barrier: " << ret->evaluate() << std::endl; // eliminar
+            
             delete solv;                        
             
         }
@@ -114,19 +112,7 @@ public:
         return ret;
         
     }
-    
-    virtual _Solution<V>* solve(const _Instance& instance) {
-
-        auto solution = this->builderSolution.solve(instance);
         
-        auto ret = this->solve(*solution);
-        
-        delete solution;
-        
-        return ret;
-
-    }
-    
     virtual _Grasp_omp* clone(){
         return new _Grasp_omp(*this);
     }

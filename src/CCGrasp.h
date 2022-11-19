@@ -17,27 +17,23 @@ class CCGrasp : public _Grasp<float> {
 public:
     CCGrasp( 
             unsigned seed,
-            CCBuilderSolution& builderSolution, 
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
             const CCLocalSearch& localSearch,
             const CCSolutionComparator& solutionComparator):
                     _Grasp<float>(
                         seed,
-                        (_Builder_Solution<float>&)builderSolution,
                         (_Stop_Condition<float>&)stopCondition,
                         (_Solution_Disturber<float>&)solutionDisturber,
                         (const _Local_Search<float>&)localSearch,
                         (const _Solution_Comparator<float>&)solutionComparator){}
     
     CCGrasp( 
-            CCBuilderSolution& builderSolution, 
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
             const CCLocalSearch& localSearch,
             const CCSolutionComparator& solutionComparator):
                     _Grasp<float>(
-                        (_Builder_Solution<float>&)builderSolution,
                         (_Stop_Condition<float>&)stopCondition,
                         (_Solution_Disturber<float>&)solutionDisturber,
                         (const _Local_Search<float>&)localSearch,
