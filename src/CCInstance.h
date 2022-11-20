@@ -1,6 +1,7 @@
 #ifndef CCINSTANCE_H
 #define CCINSTANCE_H
 
+#include <iostream>
 #include <fstream>
 #include  <sstream>
 #include "CCGraph.h"

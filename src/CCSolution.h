@@ -8,6 +8,26 @@
 class CCSolution : public _Solution<float> {
 public:
 
+    CCSolution(const CCInstance& instance, int* representation) : _Solution<float>(0.0), instance(instance), penalty(0) {
+
+        int nClusters = instance.GetNClusters();
+
+        for (int i = 0; i < nClusters; i++) {
+
+            clusters.push_back(new CCCluster(instance.GetGraph()));
+            penaltyClusters.push_back(0);
+        }
+
+        for (int i = 0; i < instance.GetNClusters(); i++){
+            for (int j = 0; j < instance.GetSize(); j++){                
+                if(representation[i * instance.GetSize() + j]){
+                    setNodo(j, 1, i);
+                }
+            }            
+        }
+
+    }
+
     CCSolution(const CCInstance& instance) : _Solution<float>(0.0), instance(instance), penalty(0) {
 
         int nClusters = instance.GetNClusters();
@@ -171,6 +191,17 @@ public:
         return ret;
 
     }
+
+    int* GetRepresentation()const{
+        int* ret = new int[instance.GetSize()*instance.GetNClusters()]; 
+        for (int i = 0; i < instance.GetNClusters(); i++){
+            for (int j = 0; j < instance.GetSize(); j++){                
+                ret[i * instance.GetSize() + j] = clusters.at(i)->GetNodo(j);
+            }            
+        }
+        return ret;
+    }
+    
     
 private:
     

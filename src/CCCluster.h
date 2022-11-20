@@ -174,8 +174,6 @@ private:
     const CCGraph& graph;
     std::vector<int> representation;
     
-    
-
 };
 
 

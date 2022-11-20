@@ -2,6 +2,7 @@
 #define _LOCAL_SEARCH_H
 
 #include <vector>
+#include <iostream>
 #include "_Solution_Algorithm.h"
 #include "_Solution.h"
 #include "_Solution_Comparator.h"
