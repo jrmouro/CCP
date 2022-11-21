@@ -9,6 +9,31 @@
 class CCGraph {
 public:
 
+    CCGraph(int size, float*adj, int* nWeight) : size(size){
+
+        if(this->size > 0){
+
+            this->adjMatrix = new float*[size];
+            this->nodosWeight = new int[size];
+
+            for (int i = 0; i < size; i++) {
+
+                this->nodosWeight[i] = nWeight[i];
+                this->adjMatrix[i] = new float[size];
+
+                for (int j = 0; j < size; j++) {
+
+                    this->adjMatrix[i][j] = adj[i * size + j];
+
+                }
+
+            }
+        
+        }
+
+
+    }
+
     CCGraph(int size) : size(size) {
         
         if(this->size > 0){
@@ -196,6 +221,8 @@ public:
         return os;
 
     }
+
+    
 
 
 private:

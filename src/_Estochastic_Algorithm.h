@@ -36,6 +36,11 @@ public:
         this->seed = seed;
     }
 
+    virtual int NextSeed(){
+        srand(seed); 
+        seed = rand();
+        return seed;
+    }
     
 private:
     

@@ -38,7 +38,6 @@ public:
         while(flag){
             
             auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
-
             flag = false;
             
             for (auto neighbor : *neighborhood) {
@@ -51,7 +50,7 @@ public:
                     
                     flag = true;
                     
-                    std::cout << "ls: " << ret->evaluate() << std::endl; // eliminar
+                    // std::cout << "ls: " << ret->evaluate() << std::endl; // eliminar
 
                 } else {
                     

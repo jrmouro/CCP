@@ -147,7 +147,7 @@ public:
             return f1 + f2;
         }
         
-        return 0;
+        return 0.0;
     }
     
     friend std::ostream& operator<<(std::ostream& os, const CCSolution& obj) {

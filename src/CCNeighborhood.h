@@ -22,14 +22,16 @@ public:
 
         std::vector<_Solution<float>*>* ret = new std::vector<_Solution<float>*>();
         ret->reserve(size*nClusters*nClusters);
-
+        
         for (int n = 0; n < size; n++){
 
             for (int i = 0; i < nClusters - 1; i++){
 
                 for (int j = 0; j < nClusters; j++){
 
-                    auto s = new CCSolution((const CCSolution&)solution);
+                    // auto s = new CCSolution((const CCSolution&)solution);
+
+                    auto s = (CCSolution*)solution.clone();
 
                     float aux = s->SwapNodo(n, i, j);
 

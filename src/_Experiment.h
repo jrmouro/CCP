@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <functional>
+#include <limits>
 #include <vector>
 #include "_Estochastic_Algorithm.h"
 #include "_Solution.h"
@@ -36,15 +37,61 @@ public:
         }
         
         friend std::ostream& operator<<(std::ostream& os, const _Experiment<V>::_Result& obj) {
-            os << "RESULT" << std::endl;
             os << "Experiment: " << obj.experimentName << std::endl;
             os << "Total Solutions: " << obj.times.size() << std::endl;
-            os << "Total time: " << totalTime(obj) << std::endl;
-            os << "Average time: " << averageTime(obj) << std::endl;
-            os << "Sigma time: " << sigmaTime(obj) << std::endl;
+            os << "Total time: " << totalTime(obj)/1000000.0 << " s"<< std::endl;
+            os << "Min Solution: " << minSolutionEvaluation(obj) << std::endl;
+            os << "Max Solution: " << maxSolutionEvaluation(obj) << std::endl;
+            os << "Average Solution: " << averageSolutionEvaluation(obj) << std::endl;
+            os << "Min time: " << minTime(obj)/1000000.0 << " s"  << std::endl;
+            os << "Max time: " << maxTime(obj)/1000000.0 << " s"  << std::endl;
+            os << "Average time: " << averageTime(obj)/1000000.0 << " s" << std::endl;
+            os << "Sigma time: " << sigmaTime(obj)/1000000.0 << " s" << std::endl;
             return os;
         }
+        
+        friend float averageSolutionEvaluation(const _Experiment<V>::_Result& result){
+            float ret = 0;
+            unsigned z;
+            result.list([&ret, &z](const _Solution<V>& solution, long long time, unsigned size){
+                ret += solution.GetEvaluation();
+                z = size;
+            });
+            if(z == 0) return 0.0;
+            return (float)ret/(float)z;
+        }
 
+        friend float maxSolutionEvaluation(const _Experiment<V>::_Result& result){
+            float ret = std::numeric_limits<float>::min();
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                ret = std::max(solution.GetEvaluation(),ret);
+            });
+            return ret;
+        }
+        
+        friend float minSolutionEvaluation(const _Experiment<V>::_Result& result){
+            float ret = std::numeric_limits<float>::max();
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                ret = std::min(solution.GetEvaluation(),ret);
+            });
+            return ret;
+        }
+        
+        friend long long maxTime(const _Experiment<V>::_Result& result){
+            long long ret = std::numeric_limits<long long>::min();
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                ret = std::max(time,ret);
+            });
+            return ret;
+        }
+        
+        friend long long minTime(const _Experiment<V>::_Result& result){
+            long long ret = std::numeric_limits<long long>::max();
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                ret = std::min(time,ret);
+            });
+            return ret;
+        }
         
         friend long long totalTime(const _Experiment<V>::_Result& result){
             unsigned ret = 0;
@@ -79,7 +126,6 @@ public:
         }
         
         private:
-            
             std::vector<_Solution<V>*> solutions;
             std::vector<long long> times;
             std::string experimentName;
@@ -102,7 +148,9 @@ public:
             auto solution = this->solve();
             auto resultado = std::chrono::high_resolution_clock::now() - inicio;
             long long microseconds = std::chrono::duration_cast<std::chrono::microseconds>(resultado).count();
-            ret->add(*this->solve(), microseconds);
+            ret->add(*solution, microseconds);
+            
+            
             
         }
 

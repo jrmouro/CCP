@@ -53,7 +53,7 @@ public:
         
         auto ret = solution.clone();
         
-        int i = 0; // eliminar
+//        int i = 0; // eliminar
         
         while(!this->stopCondition.stop(*ret)){
                                     
@@ -69,7 +69,7 @@ public:
                 
                 ret = aux2;
                 
-                std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
+//                std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
                 
             } else {
                 

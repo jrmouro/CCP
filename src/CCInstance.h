@@ -10,6 +10,34 @@
 class CCInstance : public _Instance {
 public:
     
+    CCInstance(
+        std::string filename, 
+        std::string clustersType,
+        int size, 
+        float* graph_adj, 
+        int* graph_nWeight,
+        int nClusters,
+        int *lowerClusterLimit,
+        int *upperClusterLimit,
+        int weight
+
+    ):
+        filename(filename), 
+        nClusters(nClusters),
+        weight(weight),
+        size(size),
+        clustersType(clustersType),
+        graph(new CCGraph(size, graph_adj, graph_nWeight)){
+
+            this->lowerClusterLimit = new int[this->nClusters];
+            this->upperClusterLimit = new int[this->nClusters];
+
+            for (size_t i = 0; i < this->nClusters; i++){
+                this->lowerClusterLimit[i] = lowerClusterLimit[i];
+                this->upperClusterLimit[i] = upperClusterLimit[i];
+            }
+            
+        }
    
     CCInstance(std::string filename):filename(filename) {
 
