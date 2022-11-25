@@ -76,25 +76,27 @@ public:
                 auto lsSol  = this->localSearch.solve(*localSol); 
                 
                 delete localSol;
+
+                 #pragma omp critical
+                {
                 
                 if(this->solutionComparator(*lsSol, *ret)){
-                    
-                    #pragma omp critical
-                    {
-                
+                                
                         delete ret;
 
                         ret = lsSol;
 
                         std::cout << i++ << "(" << threadId<< "): " << ret->evaluate() << std::endl; // eliminar
                     
-                    }
 
                 } else {
 
                     delete lsSol;
 
                 }
+
+
+                    }
 
             }
             
