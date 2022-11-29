@@ -54,12 +54,15 @@ public:
 
     virtual _Solution<V> *solve(const _Solution<V> &solution){
 
+        //Obtem-se uma cópia da solução dada
         auto ret = solution.clone();
 
-        int i = 0; // eliminar
+        int i = 0; // eliminar. Só para acompanhar o andamento.
 
+        // Itera até satisfazer uma condição dada
         while (!this->stopCondition.stop(*ret)){
 
+            // Obtem-se um vetor de ponteiros de soluções modificadas randomicamente
             auto solv = this->solutionDisturber.solvev(*ret);
 
             #pragma omp parallel num_threads(this->numThreads)
@@ -67,40 +70,46 @@ public:
 
                 int threadId = omp_get_thread_num();
 
+                // Pega o ponteiro da solução corresposdente à thread
                 auto localSol = solv->at(threadId);
 
+                // Obtem-se um novo ponteiro de solução mediante a busca local
                 auto lsSol = this->localSearch.solve(*localSol);
 
+                // libera memória 
                 delete localSol;
 
                 #pragma omp critical
                 {
 
+                    // Compara a qualidade da solução com a solução a ser retornada
                     if (this->solutionComparator(*lsSol, *ret)){
 
+                        // libera memória
                         delete ret;
 
+                        // subistitui a solução a ser retornada pela solução melhor
                         ret = lsSol;
 
-                        std::cout << i++ << "(" << threadId << "): " << ret->evaluate() << std::endl; // eliminar
+                         // eliminar. Só para acompanhar o andamento.
+                        std::cout << i++ << "(" << threadId << "): " << ret->evaluate() << std::endl;
+
                     }
                     else{
 
+                        // libera memória
                         delete lsSol;
                     }
                 }
             }
 
-            //            #pragma omp barrier
-            //
-            //            std::cout << "barrier: " << ret->evaluate() << std::endl; // eliminar
-
+            // libera memória do vetor de soluções 
             delete solv;
+
         }
 
-        std::cout << "ret: " << ret->evaluate() << std::endl; // eliminar
-
         return ret;
+
     }
 
     virtual _Grasp_omp *clone()

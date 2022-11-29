@@ -1,78 +1,55 @@
-#ifndef _LOCAL_SEARCH_H
-#define _LOCAL_SEARCH_H
+#ifndef _BEST_SOLUTION_H
+#define _BEST_SOLUTION_H
 
 #include <vector>
-#include <iostream>
-#include "_Solution_Algorithm.h"
+#include "_Selection_Algorithm.h"
 #include "_Solution.h"
 #include "_Solution_Comparator.h"
-#include "_Neighborhood_Algorithm.h"
 
-template <class V> class _Local_Search : public _Solution_Algorithm<V> {
+template <class V> class _Best_Solution : public _Selection_Algorithm<V> {
 public:
 
-    _Local_Search(
-            const _Neighborhood_Algorithm<V>& neighborhood,
-            const _Solution_Comparator<V>& solutionComparator) :
-                _Solution_Algorithm<V>(),
-                neighborhoodAlgorithm(neighborhood),
-                solutionComparator(solutionComparator) {}
-                
-    _Local_Search(const _Local_Search<V>& other) :
-            neighborhoodAlgorithm(other.neighborhoodAlgorithm), 
-            solutionComparator(other.solutionComparator) {}
+    _Best_Solution(const _Solution_Comparator<V>& solutionComparator) :
+            _Selection_Algorithm<V>(),
+            solutionComparator(solutionComparator) { }
 
+    _Best_Solution(const _Best_Solution<V>& other) :
+            _Selection_Algorithm<V>(other),
+            solutionComparator(other.solutionComparator) { }
 
-    virtual ~_Local_Search() { }
-    
-    virtual _Local_Search* clone(){
-        return new _Local_Search(*this);
+    virtual ~_Best_Solution() { }
+
+    virtual _Best_Solution* clone() {
+        return new _Best_Solution(*this);
     }
 
-    virtual _Solution<V>* solve(const _Solution<V>& solution) const {
-        
-        _Solution<V>* ret = solution.clone();
-        
-        bool flag = true;
-        
-        while(flag){
-            
-            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
-            flag = false;
-            
-            for (auto neighbor : *neighborhood) {
+    virtual _Solution<V>* solve(const std::vector<_Solution<V>*>& solutions) const {
 
-                if (this->solutionComparator(*neighbor, *ret)) {
-                    
-                    delete ret;
-                                                    
-                    ret = neighbor;
-                    
-                    flag = true;
-                    
-                    // std::cout << "ls: " << ret->evaluate() << std::endl; // eliminar
+        _Solution<V>* ret = nullptr;
 
-                } else {
-                    
-                    delete neighbor;
-                    
-                }
+        for (auto solution : solutions) {
 
+            if (ret == nullptr || this->solutionComparator(*solution, *ret)) {
+                
+                ret = solution;
+                
             }
-            
-            delete neighborhood;
-                    
+
         }
 
+        if(ret != nullptr)
+
+            return ret->clone();
+        
         return ret;
 
     }
 
 protected:
-    const _Neighborhood_Algorithm<V>& neighborhoodAlgorithm;
+    
     const _Solution_Comparator<V>& solutionComparator;
 
 };
 
-#endif /* _LOCAL_SEARCH_H */
+#endif /* _BEST_SOLUTION_H */
 

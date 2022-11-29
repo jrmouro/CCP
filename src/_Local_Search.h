@@ -7,20 +7,24 @@
 #include "_Solution.h"
 #include "_Solution_Comparator.h"
 #include "_Neighborhood_Algorithm.h"
+#include "_Selection_Algorithm.h"
 
 template <class V> class _Local_Search : public _Solution_Algorithm<V> {
 public:
 
     _Local_Search(
             const _Neighborhood_Algorithm<V>& neighborhood,
-            const _Solution_Comparator<V>& solutionComparator) :
+            const _Solution_Comparator<V>& solutionComparator,
+            const _Selection_Algorithm<V>& selectionAlgorithm) :
                 _Solution_Algorithm<V>(),
                 neighborhoodAlgorithm(neighborhood),
-                solutionComparator(solutionComparator) {}
+                solutionComparator(solutionComparator),
+                selectionAlgorithm(selectionAlgorithm){}
                 
     _Local_Search(const _Local_Search<V>& other) :
             neighborhoodAlgorithm(other.neighborhoodAlgorithm), 
-            solutionComparator(other.solutionComparator) {}
+            solutionComparator(other.solutionComparator),
+            selectionAlgorithm(other.selectionAlgorithm){}
 
 
     virtual ~_Local_Search() { }
@@ -35,34 +39,43 @@ public:
         
         bool flag = true;
         
+        std::cout << "    - ls: " << ret->evaluate() << std::endl;
+        
         while(flag){
-            
-            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
+                       
             flag = false;
             
+            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
+            
+            auto neighbor = this->selectionAlgorithm.solve(*neighborhood);
+            
+            if (this->solutionComparator(*neighbor, *ret)) {
+                    
+                delete ret;
+
+                ret = neighbor;
+
+                flag = true;
+
+                std::cout << "." <<  ret->evaluate(); // eliminar
+
+            } else {
+
+                delete neighbor;
+
+            }                       
+            
             for (auto neighbor : *neighborhood) {
-
-                if (this->solutionComparator(*neighbor, *ret)) {
                     
-                    delete ret;
-                                                    
-                    ret = neighbor;
-                    
-                    flag = true;
-                    
-                    // std::cout << "ls: " << ret->evaluate() << std::endl; // eliminar
-
-                } else {
-                    
-                    delete neighbor;
-                    
-                }
+                delete neighbor;
 
             }
             
             delete neighborhood;
                     
         }
+        
+        std::cout << std::endl; // eliminar
 
         return ret;
 
@@ -71,7 +84,7 @@ public:
 protected:
     const _Neighborhood_Algorithm<V>& neighborhoodAlgorithm;
     const _Solution_Comparator<V>& solutionComparator;
-
+    const _Selection_Algorithm<V>& selectionAlgorithm;
 };
 
 #endif /* _LOCAL_SEARCH_H */

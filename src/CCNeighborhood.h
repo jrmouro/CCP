@@ -29,8 +29,6 @@ public:
 
                 for (int j = 0; j < nClusters; j++){
 
-                    // auto s = new CCSolution((const CCSolution&)solution);
-
                     auto s = (CCSolution*)solution.clone();
 
                     float aux = s->SwapNodo(n, i, j);
@@ -52,6 +50,7 @@ public:
     virtual CCNeighborhood* clone(){
         return new CCNeighborhood();
     }
+    
 };
 
 #endif /* CCNEIGHBORHOOD_H */

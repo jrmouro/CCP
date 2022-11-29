@@ -1,19 +1,21 @@
-#ifndef CCNEIGHBORHOOD_H
-#define CCNEIGHBORHOOD_H
+#ifndef CCNEIGHBORHOOD_OMP_H
+#define CCNEIGHBORHOOD_OMP_H
 
+#include <omp.h>
 #include <vector>
 #include <iostream>
 #include "_Neighborhood_Algorithm.h"
 #include "_Solution.h"
 #include "CCSolution.h"
 
-class CCNeighborhood : public _Neighborhood_Algorithm<float>{
+class CCNeighborhood_omp : public CCNeighborhood{
+    
 public:
     
-    CCNeighborhood(){}
-    CCNeighborhood(const CCNeighborhood& other){}
+    CCNeighborhood_omp(unsigned numThreads):CCNeighborhood(), numThreads(numThreads){}
+    CCNeighborhood_omp(const CCNeighborhood_omp& other):CCNeighborhood(other), numThreads(other.numThreads){}
     
-    virtual ~CCNeighborhood() {}
+    virtual ~CCNeighborhood_omp() {}
     
     virtual std::vector<_Solution<float>*>* solvev(const _Solution<float>& solution) const{
 
@@ -23,35 +25,55 @@ public:
         std::vector<_Solution<float>*>* ret = new std::vector<_Solution<float>*>();
         ret->reserve(size*nClusters*nClusters);
         
-        for (int n = 0; n < size; n++){
+        #pragma omp parallel num_threads(this->numThreads)
+        {
+            
+            int threadId = omp_get_thread_num();
+            
+            int _size = size / this->numThreads;
+            
+            int aux = threadId * _size + _size;
 
-            for (int i = 0; i < nClusters - 1; i++){
+            for (int n = threadId * _size; n < aux; n++){
 
-                for (int j = 0; j < nClusters; j++){
+                for (int i = 0; i < nClusters - 1; i++){
 
-                    // auto s = new CCSolution((const CCSolution&)solution);
+                    for (int j = 0; j < nClusters; j++){
 
-                    auto s = (CCSolution*)solution.clone();
+                        auto s = (CCSolution*)solution.clone();
 
-                    float aux = s->SwapNodo(n, i, j);
+                        float aux = s->SwapNodo(n, i, j);
 
-                    if (aux > 0.0){
-                        ret->push_back(s);
-                    }else{
-                        delete s;
+                        if (aux > 0.0){
+                            
+                            #pragma omp critical
+                            {
+                                
+                                ret->push_back(s);
+                            
+                            }
+                            
+                        }else{
+                            
+                            delete s;
+                            
+                        }
+
                     }
-                    
                 }
             }
         }
-
+        
         return ret;
         
     }
     
-    virtual CCNeighborhood* clone(){
-        return new CCNeighborhood();
+    virtual CCNeighborhood_omp* clone(){
+        return new CCNeighborhood_omp(*this);
     }
+    
+    private:
+        unsigned numThreads;
 };
 
-#endif /* CCNEIGHBORHOOD_H */
+#endif /* CCNEIGHBORHOOD_OMP_H */

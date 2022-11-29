@@ -55,6 +55,8 @@ public:
         
         int i = 0; // eliminar
         
+        std::cout << " - Grasp(" <<  this->solutionDisturber.GetSeed() << "): " << ret->evaluate() << std::endl; // eliminar
+                                
         while(!this->stopCondition.stop(*ret)){
                                     
             auto aux = this->solutionDisturber.solve(*ret);
@@ -69,7 +71,7 @@ public:
                 
                 ret = aux2;
                 
-                std::cout << i++ << ": " << ret->evaluate() << std::endl; // eliminar
+                std::cout << "   - " << i << ": " << ret->evaluate() << std::endl; // eliminar
                 
             } else {
                 
@@ -79,6 +81,7 @@ public:
                 
             }
             
+            i++;
             
         }
         
