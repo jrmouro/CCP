@@ -17,31 +17,18 @@ class CCGrasp_omp : public _Grasp_omp<float> {
 public:
     CCGrasp_omp( 
             unsigned numThreads,
-            unsigned seed,
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
             const CCLocalSearch& localSearch,
             const CCSolutionComparator& solutionComparator):
                     _Grasp_omp<float>(
                         numThreads,
-                        seed,
                         (_Stop_Condition<float>&)stopCondition,
                         (_Solution_Disturber<float>&)solutionDisturber,
-                        (const _Local_Search<float>&)localSearch,
+                        (_Local_Search<float>&)localSearch,
                         (const _Solution_Comparator<float>&)solutionComparator){}
     
-    CCGrasp_omp( 
-            unsigned numThreads,
-            CCStopCondition& stopCondition,
-            CCSolutionDisturber& solutionDisturber,
-            const CCLocalSearch& localSearch,
-            const CCSolutionComparator& solutionComparator):
-                    _Grasp_omp<float>(
-                        numThreads,
-                        (_Stop_Condition<float>&)stopCondition,
-                        (_Solution_Disturber<float>&)solutionDisturber,
-                        (const _Local_Search<float>&)localSearch,
-                        (const _Solution_Comparator<float>&)solutionComparator){}
+    
     
     virtual ~CCGrasp_omp(){}
     

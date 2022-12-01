@@ -18,34 +18,14 @@ public:
         unsigned numThreads,
         _Stop_Condition<V> &stopCondition,
         _Solution_Disturber<V> &solutionDisturber,
-        const _Local_Search<V> &localSearch,
+        _Local_Search<V> &localSearch,
         const _Solution_Comparator<V> &solutionComparator) : _Grasp<V>(stopCondition,
                                                                        solutionDisturber,
                                                                        localSearch,
                                                                        solutionComparator),
                                                              numThreads(numThreads)
-    {
+    { }
 
-        this->solutionDisturber.SetAmount(numThreads);
-    }
-
-    _Grasp_omp(
-        unsigned numThreads,
-        unsigned seed,
-        _Stop_Condition<V> &stopCondition,
-        _Solution_Disturber<V> &solutionDisturber,
-        const _Local_Search<V> &localSearch,
-        const _Solution_Comparator<V> &solutionComparator) : numThreads(numThreads),
-                                                             _Grasp<V>(
-                                                                 seed,
-                                                                 stopCondition,
-                                                                 solutionDisturber,
-                                                                 localSearch,
-                                                                 solutionComparator)
-    {
-
-        this->solutionDisturber.SetAmount(numThreads);
-    }
 
     _Grasp_omp(const _Grasp_omp<V> &other) : _Grasp<V>(other),
                                              numThreads(other.numThreads) {}
@@ -53,6 +33,9 @@ public:
     virtual ~_Grasp_omp() {}
 
     virtual _Solution<V> *solve(const _Solution<V> &solution){
+        
+        this->stopCondition.reset(); 
+        this->solutionDisturber.SetAmount(numThreads);
 
         //Obtem-se uma cópia da solução dada
         auto ret = solution.clone();
@@ -78,29 +61,29 @@ public:
 
                 // libera memória 
                 delete localSol;
+                
 
-                #pragma omp critical
-                {
-
-                    // Compara a qualidade da solução com a solução a ser retornada
-                    if (this->solutionComparator(*lsSol, *ret)){
-
+                // Compara a qualidade da solução com a solução a ser retornada
+                if (this->solutionComparator(*lsSol, *ret)){
+                    #pragma omp critical
+                    {
                         // libera memória
                         delete ret;
 
                         // subistitui a solução a ser retornada pela solução melhor
                         ret = lsSol;
 
-                         // eliminar. Só para acompanhar o andamento.
-                        std::cout << i++ << "(" << threadId << "): " << ret->evaluate() << std::endl;
+                     // eliminar. Só para acompanhar o andamento.
+//                        std::cout << i++ << "(" << threadId << "): " << ret->evaluate() << std::endl;
 
                     }
-                    else{
 
-                        // libera memória
-                        delete lsSol;
-                    }
+                }else{
+
+                    // libera memória
+                    delete lsSol;
                 }
+                   
             }
 
             // libera memória do vetor de soluções 

@@ -15,6 +15,8 @@ public:
 
     virtual _Solution<V>* solve(const std::vector<_Solution<V>*>& solutions) const = 0;
     
+    virtual void reset(){}
+    
 };
 
 #endif /* _SELECT_ALGORITHM_H */

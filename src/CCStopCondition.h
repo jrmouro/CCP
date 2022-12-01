@@ -27,6 +27,7 @@ public:
     virtual void reset(){        
         current = 0;        
     }
+    
 private:
     int nIterations, current = 0;
 };

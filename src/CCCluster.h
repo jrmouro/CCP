@@ -19,14 +19,7 @@ public:
         graph(other.graph), 
         representation(other.representation) { }
 
-//    CCCluster(CCCluster* other) : 
-//        _Evaluable<float>(other),
-//        totalNodoWeight(other->totalNodoWeight),
-//        graph(other->graph),            
-//        representation(other->representation) { }
-
-    virtual ~CCCluster() { }
-    
+    virtual ~CCCluster() { }    
 
     friend std::ostream& operator<<(std::ostream& os, const CCCluster& obj) {
 
@@ -54,18 +47,15 @@ public:
 
             this->representation.at(nodo) = 1;
 
-
             this->graph.ListEdgesByNodo(nodo, [nodo, this, &s](int dst, float w) {
 
                 if (this->representation.at(dst) == 1) {
 
-                    s += w + this->graph.EdgeWeight(dst, nodo);
+                    s += (w + this->graph.EdgeWeight(dst, nodo));
 
                 }
 
             });
-
-//            this->evaluation += s;
             
             this->SetEvaluation(this->GetEvaluation() + s);
             
@@ -94,10 +84,12 @@ public:
     }
     
     float SetNodo(int nodo, int value, int* nodoWeight){
+
         if(value == 0)
             return DelNodo(nodo, nodoWeight);
         
         return  AddNodo(nodo, nodoWeight);
+        
     }
 
     float DelNodo(int nodo, int* nodoWeight) {
@@ -112,24 +104,21 @@ public:
 
                 if (this->representation.at(dst) == 1) {
 
-                    s += w + this->graph.EdgeWeight(dst, nodo);
+                    s -= (w + this->graph.EdgeWeight(dst, nodo));
 
                 }
 
             });
-
-//            this->evaluation -= s;
             
-            this->SetEvaluation(this->GetEvaluation() - s);
+            this->SetEvaluation(this->GetEvaluation() + s);
             
             this->totalNodoWeight -= this->graph.NodoWeight(nodo);
             
-
         }
         
         *nodoWeight = this->totalNodoWeight;
         
-        return -s;
+        return s;
 
     }
 

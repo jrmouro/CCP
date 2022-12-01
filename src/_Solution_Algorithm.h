@@ -8,7 +8,8 @@ template <class V> class _Solution_Algorithm : public _Algorithm {
 public:
     _Solution_Algorithm():_Algorithm() {}
     virtual ~_Solution_Algorithm() {}    
-    virtual _Solution<V>* solve(const _Solution<V>& solution) const = 0;
+    virtual _Solution<V>* solve(const _Solution<V>& solution) = 0;
+    virtual void reset(){}
 };
 
 #endif /* _SOLUTION_ALGORITHM_H */

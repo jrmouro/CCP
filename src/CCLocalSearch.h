@@ -13,7 +13,7 @@ public:
         const CCSolutionComparator& solutionComparator,
         const _Selection_Algorithm<float>& selectionAlgorithm):
             _Local_Search<float>(
-                (const _Neighborhood_Algorithm<float>&)neighborhood, 
+                (_Neighborhood_Algorithm<float>&)neighborhood, 
                 (const _Solution_Comparator<float>&)solutionComparator,
                 selectionAlgorithm) {}
 

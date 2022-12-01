@@ -29,7 +29,11 @@ public:
 
         for (auto solution : solutions) {
 
-            if (ret == nullptr || this->solutionComparator(*solution, *ret)) {
+            if (ret == nullptr){
+                
+                ret = solution;
+                
+            } else if(this->solutionComparator(*solution, *ret)) {
                 
                 ret = solution;
                 

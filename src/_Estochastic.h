@@ -1,52 +1,51 @@
-#ifndef _ESTOCHASTIC_ALGORITHM_H
-#define _ESTOCHASTIC_ALGORITHM_H
+#ifndef _ESTOCHASTIC_H
+#define _ESTOCHASTIC_H
 
 #include <chrono>
 #include <random>
-#include "_Algorithm.h"
+#include "_Resetable.h"
 
-class _Estochastic_Algorithm : public _Algorithm{
+class _Estochastic:public _Resetable{
     
 public:
     
-    _Estochastic_Algorithm(){}
-    _Estochastic_Algorithm(unsigned seed):seed(seed){}
-    _Estochastic_Algorithm(const _Estochastic_Algorithm& other) :seed(other.seed) {}
-    _Estochastic_Algorithm& operator=(const _Estochastic_Algorithm& right) {
-        if (this == &right)
-            return *this;
-        this->seed = right.seed;
-        return *this;
+    _Estochastic(unsigned seed):currentSeed(seed), initialSeed(seed){ }
+        
+    _Estochastic(const _Estochastic& other) : initialSeed(other.initialSeed), currentSeed(other.currentSeed) { }
+        
+    virtual ~_Estochastic() { }
+    
+    int NextInt(int offset, int range){
+        srand(currentSeed); 
+        currentSeed = rand(); 
+        return offset + currentSeed%range;        
     }
     
-    virtual ~_Estochastic_Algorithm() {}
-    
-    virtual int NextRandomInt(int offset, int range){
-        srand(seed); 
-        int ret = offset + rand()%range;
-        seed = rand();
-        return ret;        
+    unsigned GetCurrentSeed() const {
+        
+        return currentSeed;
+        
     }
     
-    unsigned GetSeed() const {
-        return seed;
+    unsigned GetInitialSeed() const {
+        return initialSeed;
     }
-
-    void SetSeed(unsigned seed) {
-        this->seed = seed;
+    
+    
+    virtual void reset(){
+        
+        currentSeed = initialSeed;
+        
     }
-
-    virtual int NextSeed(){
-        srand(seed); 
-        seed = rand();
-        return seed;
-    }
+       
     
 private:
     
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    
+    unsigned initialSeed, currentSeed;
+        
 };
 
-#endif /* _ESTOCHASTIC_ALGORITHM_H */
+
+
+#endif /* _ESTOCHASTIC_H */
 

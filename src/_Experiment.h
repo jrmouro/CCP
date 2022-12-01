@@ -1,14 +1,15 @@
 #ifndef _EXPERIMENT_H
 #define _EXPERIMENT_H
 
+#include <chrono>
 #include <math.h>
 #include <functional>
 #include <limits>
 #include <vector>
-#include "_Estochastic_Algorithm.h"
+#include "_Algorithm.h"
 #include "_Solution.h"
 
-template <class V> class _Experiment : public _Estochastic_Algorithm{
+template <class V> class _Experiment : public _Algorithm{
 public:
     
     class _Result{
@@ -67,6 +68,53 @@ public:
                 ret = std::max(solution.GetEvaluation(),ret);
             });
             return ret;
+        }
+        
+        friend _Solution<V>* minSolution(const _Experiment<V>::_Result& result){
+            
+            _Solution<V>* ret = nullptr;
+            
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                
+                if(ret == nullptr){
+                                        
+                    ret = solution.clone();
+                    
+                } else if(solution.GetEvaluation() <= ret->GetEvaluation()){
+                    
+                    delete ret;
+                    
+                    ret = solution.clone();
+                    
+                }
+                                
+            });
+            
+            return ret;
+        }
+        
+        friend _Solution<V>* maxSolution(const _Experiment<V>::_Result& result){
+            
+            _Solution<V>* ret = nullptr;
+            
+            result.list([&ret](const _Solution<V>& solution, long long time, unsigned size){
+                
+                if(ret == nullptr){
+                                        
+                    ret = solution.clone();
+                    
+                } else if(solution.GetEvaluation() >= ret->GetEvaluation()){
+                    
+                    delete ret;
+                    
+                    ret = solution.clone();
+                    
+                }
+                
+            });
+            
+            return ret;
+            
         }
         
         friend float minSolutionEvaluation(const _Experiment<V>::_Result& result){
@@ -132,9 +180,9 @@ public:
             
     };
     
-    _Experiment(std::string name, unsigned repeat) : _Estochastic_Algorithm(), name(name), repeat(repeat){ }
-    _Experiment(std::string name, unsigned repeat, unsigned seed) : _Estochastic_Algorithm(seed), name(name), repeat(repeat) {}
-    _Experiment(const _Experiment<V>& other) : _Estochastic_Algorithm(other), name(other.name), repeat(other.repeat) {}
+    _Experiment(std::string name, unsigned repeat) : _Algorithm(), name(name), repeat(repeat){ }
+    _Experiment(std::string name, unsigned repeat, unsigned seed) : _Algorithm(seed), name(name), repeat(repeat) {}
+    _Experiment(const _Experiment<V>& other) : _Algorithm(other), name(other.name), repeat(other.repeat) {}
     
    virtual ~_Experiment(){}
    
@@ -157,6 +205,8 @@ public:
        return ret;
        
    }
+   
+   virtual void reset(){}
    
    virtual _Solution<V>* solve() = 0;
    

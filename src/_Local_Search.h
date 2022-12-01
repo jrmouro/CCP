@@ -13,7 +13,7 @@ template <class V> class _Local_Search : public _Solution_Algorithm<V> {
 public:
 
     _Local_Search(
-            const _Neighborhood_Algorithm<V>& neighborhood,
+            _Neighborhood_Algorithm<V>& neighborhood,
             const _Solution_Comparator<V>& solutionComparator,
             const _Selection_Algorithm<V>& selectionAlgorithm) :
                 _Solution_Algorithm<V>(),
@@ -32,57 +32,107 @@ public:
     virtual _Local_Search* clone(){
         return new _Local_Search(*this);
     }
+    
+    virtual _Solution<V>* solve(const _Solution<V>& solution) {
+        
+        _Solution<V>* ret = solution.clone();             
+        
+//        std::cout << "    - ls: " << ret->evaluate();
+                            
+        auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
 
-    virtual _Solution<V>* solve(const _Solution<V>& solution) const {
-        
-        _Solution<V>* ret = solution.clone();
-        
-        bool flag = true;
-        
-        std::cout << "    - ls: " << ret->evaluate() << std::endl;
-        
-        while(flag){
-                       
-            flag = false;
-            
-            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
-            
-            auto neighbor = this->selectionAlgorithm.solve(*neighborhood);
-            
+        auto neighbor = this->selectionAlgorithm.solve(*neighborhood);
+
+        if(neighbor != nullptr){
+
             if (this->solutionComparator(*neighbor, *ret)) {
-                    
+
                 delete ret;
 
-                ret = neighbor;
+                ret = neighbor;               
 
-                flag = true;
-
-                std::cout << "." <<  ret->evaluate(); // eliminar
+//                std::cout << " => " <<  ret->evaluate(); // eliminar
 
             } else {
 
                 delete neighbor;
 
-            }                       
-            
-            for (auto neighbor : *neighborhood) {
-                    
-                delete neighbor;
+            } 
 
-            }
-            
-            delete neighborhood;
-                    
         }
+
+        for (auto neighbor : *neighborhood) {
+
+            delete neighbor;
+
+        }
+
+        delete neighborhood;
+                    
         
-        std::cout << std::endl; // eliminar
+        
+//        std::cout << std::endl; // eliminar
 
         return ret;
 
     }
 
+//    virtual _Solution<V>* solve(const _Solution<V>& solution) {
+//        
+//        _Solution<V>* ret = solution.clone();
+//        
+//        bool flag = true;
+//        
+//        std::cout << "    - ls: " << ret->evaluate() << std::endl;
+//        
+//        while(flag){
+//                       
+//            flag = false;
+//            
+//            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
+//            
+//            auto neighbor = this->selectionAlgorithm.solve(*neighborhood);
+//            
+//            if(neighbor != nullptr){
+//            
+//                if (this->solutionComparator(*neighbor, *ret)) {
+//
+//                    delete ret;
+//
+//                    ret = neighbor;
+//
+//                    flag = true;
+//
+//                    std::cout << "." <<  ret->evaluate(); // eliminar
+//
+//                } else {
+//
+//                    delete neighbor;
+//
+//                } 
+//            
+//            }
+//            
+//            for (auto neighbor : *neighborhood) {
+//                    
+//                delete neighbor;
+//
+//            }
+//            
+//            delete neighborhood;
+//                    
+//        }
+//        
+//        std::cout << std::endl; // eliminar
+//
+//        return ret;
+//
+//    }
+    
+    virtual void reset(){}
+
 protected:
-    const _Neighborhood_Algorithm<V>& neighborhoodAlgorithm;
+    _Neighborhood_Algorithm<V>& neighborhoodAlgorithm;
     const _Solution_Comparator<V>& solutionComparator;
     const _Selection_Algorithm<V>& selectionAlgorithm;
 };

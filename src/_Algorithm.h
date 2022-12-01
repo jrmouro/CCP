@@ -7,7 +7,6 @@
 class _Algorithm : public _Clonable, public _Resetable{
 public:
    virtual ~_Algorithm(){}
-   virtual void reset(){}
 };
 
 #endif /* _ALGORITHM_H */

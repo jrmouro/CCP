@@ -53,20 +53,6 @@ public:
         
     }
     
-//    CCSolution(CCSolution* other) : _Solution<float>(other), instance(other->instance), penalty(other->penalty) {
-//         
-//        int nClusters = instance.GetNClusters();
-//
-//        for (int i = 0; i < nClusters; i++) {
-//
-//            clusters.push_back(new CCCluster( other->clusters.at(i)));
-//            penaltyClusters.push_back(other->penaltyClusters.at(i));
-//
-//        }        
-//        
-//    }
-
-
     virtual ~CCSolution() {
         
         for(auto c : clusters){
@@ -85,7 +71,7 @@ public:
         
         int nw;
         float aux = this->clusters.at(cluster)->SetNodo(nodo, value, &nw);
-//        this->evaluation += aux;
+
         this->SetEvaluation(this->GetEvaluation() + aux);
         
         int cPenalty = 0;
@@ -99,9 +85,9 @@ public:
             cPenalty = nw - this->instance.GetUpperClusterLimit(cluster);
             
         }
-        
-        this->penalty += cPenalty - this->penaltyClusters.at(cluster);
-        
+
+        this->penalty -= this->penaltyClusters.at(cluster);
+        this->penalty += cPenalty;        
         this->penaltyClusters.at(cluster) = cPenalty;
         
         return aux;
@@ -113,7 +99,6 @@ public:
         int nw;
         float aux = this->clusters.at(cluster)->SwapNodo(nodo, &nw);
         
-//        this->evaluation += aux;
         this->SetEvaluation(this->GetEvaluation() + aux);
         
         int cPenalty = 0;
@@ -128,8 +113,8 @@ public:
             
         }
         
-        this->penalty += cPenalty - this->penaltyClusters.at(cluster);
-        
+        this->penalty -= this->penaltyClusters.at(cluster);
+        this->penalty += cPenalty;        
         this->penaltyClusters.at(cluster) = cPenalty;
         
         return aux;
@@ -148,11 +133,10 @@ public:
         }
         
         return 0.0;
+        
     }
     
     friend std::ostream& operator<<(std::ostream& os, const CCSolution& obj) {
-//        os << "Instance:" << std::endl;
-//        os << *obj.instance << std::endl;
         os << "Evaluation: " << obj.GetEvaluation() << std::endl;
         os << "Penalty: " << obj.GetPenalty() << std::endl;
         os << "Clusters:" << std::endl;

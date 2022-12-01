@@ -10,7 +10,6 @@ class CCBuilderSolution : public _Builder_Solution<float> {
 public:
 
     CCBuilderSolution() :_Builder_Solution<float>(){ }
-    CCBuilderSolution(unsigned seed) :_Builder_Solution<float>(seed){ }
     
     CCBuilderSolution(const CCBuilderSolution& other) :
     _Builder_Solution<float>(other) {}

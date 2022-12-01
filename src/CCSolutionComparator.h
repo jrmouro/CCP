@@ -14,6 +14,12 @@ public:
     virtual bool operator()(const _Solution<float>& s1, const _Solution<float>& s2) const{
         return s1.GetEvaluation() - s1.GetEvaluation()* rate * ((CCSolution&)s1).GetPenalty() > s2.GetEvaluation() - s2.GetEvaluation() * rate * ((CCSolution&)s2).GetPenalty();
     }
+    
+    virtual bool operator()(const _Solution<float>& solution, const float& value) const{
+        return solution.GetEvaluation() - solution.GetEvaluation()* rate * ((CCSolution&)solution).GetPenalty() > value;
+    }
+    
+    
     virtual ~CCSolutionComparator(){}
     
     virtual CCSolutionComparator* clone(){
