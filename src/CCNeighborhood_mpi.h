@@ -1,70 +1,46 @@
-#ifndef CCNEIGHBORHOOD_OMP_H
-#define CCNEIGHBORHOOD_OMP_H
+#ifndef CCNEIGHBORHOOD_MPI_H
+#define CCNEIGHBORHOOD_MPI_H
 
-#include <omp.h>
 #include <vector>
 #include <iostream>
-#include "_Neighborhood_Algorithm.h"
 #include "_Solution.h"
 #include "CCSolution.h"
+#include "CCNeighborhood.h"
 
-class CCNeighborhood_omp : public CCNeighborhood {
+class CCNeighborhood_mpi : public CCNeighborhood {
 public:
 
-    CCNeighborhood_omp(const _Solution_Comparator<float>& solutionComparator, unsigned numThreads) : CCNeighborhood(solutionComparator), numThreads(numThreads) {
-    }
+    CCNeighborhood_mpi(
+            int node, int comm_sz,
+            const CCInstance& instance,
+            const _Solution_Comparator<float>& solutionComparator) : 
+                CCNeighborhood(solutionComparator),                 
+                node(node), comm_sz(comm_sz),
+                instance(instance) {}
 
-    CCNeighborhood_omp(const CCNeighborhood_omp& other) : CCNeighborhood(other), numThreads(other.numThreads) {
-    }
+    CCNeighborhood_mpi(
+            const CCNeighborhood_mpi& other) : 
+                CCNeighborhood(other), 
+                node(other.node), comm_sz(other.comm_sz), instance(other.instance){}
 
-    virtual ~CCNeighborhood_omp() {
-    }
+    virtual ~CCNeighborhood_mpi() { }
 
     virtual std::vector<_Solution<float>*>* solvev(const _Solution<float>& solution) {
 
-        int nClusters = ((const CCSolution&) solution).GetInstance().GetNClusters();
-        int size = ((const CCSolution&) solution).GetInstance().GetSize();
+        std::vector<_Solution<float>*>* ret = nullptr;
 
-        std::vector<_Solution<float>*>* ret = new std::vector<_Solution<float>*>();
-        ret->reserve(size * nClusters * nClusters);
+        if(this->node == 0){
 
-        #pragma omp parallel num_threads(this->numThreads)
-        {
+            ret = new std::vector<_Solution<float>*>();
 
-            int threadId = omp_get_thread_num();
+        }
 
-            int _size = size / this->numThreads;
+        auto solutionAux = this->solve(solution);
 
-            int aux = threadId * _size + _size;
+        if(this->node == 0){
 
-            for (int n = threadId * _size; n < aux; n++) {
+            ret->push_back(solutionAux); 
 
-                for (int i = 0; i < nClusters - 1; i++) {
-
-                    for (int j = 0; j < nClusters; j++) {
-
-                        auto s = (CCSolution*) solution.clone();
-
-                        float aux = s->SwapNodo(n, i, j);
-
-                        if (aux > 0.0) {
-
-                            #pragma omp critical
-                            {
-
-                                ret->push_back(s);
-
-                            }
-
-                        } else {
-
-                            delete s;
-
-                        }
-
-                    }
-                }
-            }
         }
 
         return ret;
@@ -73,62 +49,105 @@ public:
 
     virtual _Solution<float>* solve(const _Solution<float>& solution) {
 
-        auto ret = solution.clone();
+        _Solution<float>* ret, *sol;
+        int nClusters = instance.GetNClusters();
+        int size = instance.GetSize();
+        int rep_size = instance.GetSize() * instance.GetNClusters();
+        
+        if(this->node == 0){
+            ret = solution.clone();
+            sol = solution.clone();
+            auto sRep = ((CCSolution*) ret)->GetRepresentation();
+            MPI_Bcast(sRep, rep_size, MPI_INT, 0,  MPI_COMM_WORLD);
+            delete sRep;
+        } else {
+            auto sRep = new int[rep_size];
+            MPI_Bcast(sRep, rep_size, MPI_INT, 0,  MPI_COMM_WORLD);
+            ret = new CCSolution(instance, sRep);
+            sol = ret->clone();
+            delete sRep;
+        }
 
-        int nClusters = ((const CCSolution&) solution).GetInstance().GetNClusters();
-        int size = ((const CCSolution&) solution).GetInstance().GetSize();
+        int _size = size / this->comm_sz;
 
-        #pragma omp parallel num_threads(this->numThreads)
-        {
+        int aux = this->node * _size + _size;
 
-            int threadId = omp_get_thread_num();
+        for (int n = this->node * _size; n < aux; n++) {
 
-            int _size = size / this->numThreads;
+            for (int i = 0; i < nClusters - 1; i++) {
 
-            int aux = threadId * _size + _size;
+                for (int j = 0; j < nClusters; j++) {
 
-            for (int n = threadId * _size; n < aux; n++) {
+                    auto s = (CCSolution*) sol->clone();
 
-                for (int i = 0; i < nClusters - 1; i++) {
+                    float aux = s->SwapNodo(n, i, j);
+                                            
+                    if (this->solutionComparator(*s, *ret)) {
 
-                    for (int j = 0; j < nClusters; j++) {
+                        delete ret;
+                        ret = s;
 
-                        auto s = (CCSolution*) solution.clone();
+                    } else {
 
-                        float aux = s->SwapNodo(n, i, j);
-                        
-                        #pragma omp critical
-                        {
+                        delete s;
 
-                            if (this->solutionComparator(*s, *ret)) {
-
-                                delete ret;
-                                ret = s;
-
-                            } else {
-
-                                delete s;
-
-                            }
-                        
-                        }
-                    }
+                    }                        
+                    
                 }
             }
         }
+
+        if (node == 0) {
+
+            for (int i = 1; i < comm_sz; i++) {
+
+                auto sRep = new int[rep_size];
+                MPI_Recv(sRep, rep_size, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                auto solutionAux = new CCSolution(instance, sRep);
+                delete sRep;
+
+                if (this->solutionComparator(*solutionAux, *ret)) {
+
+                    delete ret;
+
+                    ret = solutionAux;
+
+                    // std::cout << i << "+t: " << ret->GetEvaluation() << std::endl;
+
+                } else {
+
+                    // std::cout << i << "-t: " << solutionAux2->GetEvaluation() << std::endl;
+
+                    delete solutionAux;
+
+                }
+
+            }
+
+        } else {
+
+            auto sRep = ((CCSolution*)ret)->GetRepresentation();
+            MPI_Send(sRep, rep_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+            delete sRep;
+            delete ret;
+            ret = nullptr;
+
+        }
+
+        delete sol;        
         
         return ret;
 
     }
 
-    virtual CCNeighborhood_omp* clone() {
-        return new CCNeighborhood_omp(*this);
+    virtual CCNeighborhood_mpi* clone() {
+        return new CCNeighborhood_mpi(*this);
     }
 
 private:
-    unsigned numThreads;
-
+    const CCInstance& instance;
+    int node, comm_sz;
 
 };
 
-#endif /* CCNEIGHBORHOOD_OMP_H */
+#endif /* CCNEIGHBORHOOD_MPI_H */

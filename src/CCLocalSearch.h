@@ -9,7 +9,7 @@ class CCLocalSearch : public _Local_Search<float> {
 public:
 
     CCLocalSearch(
-        const CCNeighborhood& neighborhood,
+        CCNeighborhood& neighborhood,
         const CCSolutionComparator& solutionComparator,
         const _Selection_Algorithm<float>& selectionAlgorithm):
             _Local_Search<float>(

@@ -20,41 +20,24 @@ public:
 
     CCGrasp_mpi(
             const CCInstance& instance,
-            CCBuilderSolution& bs,
-            int node, int comm_sz,
-            unsigned seed,
-            CCStopCondition& stopCondition,
-            CCSolutionDisturber& solutionDisturber,
-            const CCLocalSearch& localSearch,
-            const CCSolutionComparator& solutionComparator) :
-    instance(instance), bs(bs),node(node), comm_sz(comm_sz),
-    _Grasp<float>(
-    seed,
-    (_Stop_Condition<float>&)stopCondition,
-    (_Solution_Disturber<float>&)solutionDisturber,
-    (const _Local_Search<float>&)localSearch,
-    (const _Solution_Comparator<float>&)solutionComparator) {
-    }
-
-    CCGrasp_mpi(
-            const CCInstance& instance,
-            CCBuilderSolution& bs,
             int node, int comm_sz,
             CCStopCondition& stopCondition,
             CCSolutionDisturber& solutionDisturber,
-            const CCLocalSearch& localSearch,
+            CCLocalSearch& localSearch,
             const CCSolutionComparator& solutionComparator) :
-    instance(instance), bs(bs),node(node), comm_sz(comm_sz),
-    _Grasp<float>(
-    (_Stop_Condition<float>&)stopCondition,
-    (_Solution_Disturber<float>&)solutionDisturber,
-    (const _Local_Search<float>&)localSearch,
-    (const _Solution_Comparator<float>&)solutionComparator) {
-    }
+                instance(instance),node(node), comm_sz(comm_sz),
+                _Grasp<float>(
+                    (_Stop_Condition<float>&)stopCondition,
+                    (_Solution_Disturber<float>&)solutionDisturber,
+                    (_Local_Search<float>&)localSearch,
+                    (const _Solution_Comparator<float>&)solutionComparator) { }
 
+    
     virtual ~CCGrasp_mpi() {}
 
     virtual _Solution<float>* solve(const _Solution<float>& solution) {
+
+        this->stopCondition.reset(); 
 
         int rep_size = instance.GetSize() * instance.GetNClusters();
         this->solutionDisturber.SetAmount(comm_sz - 1);
@@ -62,7 +45,7 @@ public:
         _Solution<float>* ret = nullptr;
 
         if(node == 0){
-            ret = bs.solve(instance);
+            ret = solution.clone();
         }
 
         bool flag = 1;
@@ -94,7 +77,11 @@ public:
 
             }
 
+            // std::cout << node << " - ret: " << ret->GetEvaluation() << std::endl;
+
             auto solutionAux = this->localSearch.solve(*ret);
+
+            // std::cout << node << " - ls aux: " << solutionAux->GetEvaluation() << std::endl;
 
             if (this->solutionComparator(*solutionAux, *ret)) {
 
@@ -183,7 +170,6 @@ public:
 
 private:
     const CCInstance& instance;
-    CCBuilderSolution& bs;
     int node, comm_sz;
 
 };
