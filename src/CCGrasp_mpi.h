@@ -66,7 +66,7 @@ public:
 
                 delete aux;
 
-                // std::cout << "b0: " << ret->GetEvaluation() << std::endl;
+                std::cout << "ret: " << ret->GetEvaluation() << std::endl;
 
             } else {
 
