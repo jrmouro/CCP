@@ -49,14 +49,16 @@ public:
 
     virtual _Solution<float>* solve(const _Solution<float>& solution) {
 
-        _Solution<float>* ret, *sol;
+        _Solution<float>* ret;//, *sol;
         int nClusters = instance.GetNClusters();
         int size = instance.GetSize();
         int rep_size = instance.GetSize() * instance.GetNClusters();
         
         if(this->node == 0){
+           
             ret = solution.clone();
-            sol = solution.clone();
+            //sol = solution.clone();
+            // std::cout << "node: " << node << ": " << ret->GetEvaluation() << std::endl;
             auto sRep = ((CCSolution*) ret)->GetRepresentation();
             MPI_Bcast(sRep, rep_size, MPI_INT, 0,  MPI_COMM_WORLD);
             delete sRep;
@@ -64,7 +66,8 @@ public:
             auto sRep = new int[rep_size];
             MPI_Bcast(sRep, rep_size, MPI_INT, 0,  MPI_COMM_WORLD);
             ret = new CCSolution(instance, sRep);
-            sol = ret->clone();
+            //sol = ret->clone();
+            // std::cout << "node: " << node << ": " << ret->GetEvaluation() << std::endl;
             delete sRep;
         }
 
@@ -78,7 +81,7 @@ public:
 
                 for (int j = 0; j < nClusters; j++) {
 
-                    auto s = (CCSolution*) sol->clone();
+                    auto s = (CCSolution*) ret->clone();
 
                     float aux = s->SwapNodo(n, i, j);
                                             
@@ -134,7 +137,9 @@ public:
 
         }
 
-        delete sol;        
+        // delete sol;    
+
+        //std::cout << ret->GetEvaluation() << std::endl;
         
         return ret;
 

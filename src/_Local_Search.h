@@ -36,8 +36,6 @@ public:
     virtual _Solution<V>* solve(const _Solution<V>& solution) {
         
         _Solution<V>* ret = solution.clone();             
-        
-//        std::cout << "    - ls: " << ret->evaluate();
                             
         auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
 
@@ -50,8 +48,6 @@ public:
                 delete ret;
 
                 ret = neighbor;               
-
-//                std::cout << " => " <<  ret->evaluate(); // eliminar
 
             } else {
 
@@ -69,65 +65,10 @@ public:
 
         delete neighborhood;
                     
-        
-        
-//        std::cout << std::endl; // eliminar
 
         return ret;
 
     }
-
-//    virtual _Solution<V>* solve(const _Solution<V>& solution) {
-//        
-//        _Solution<V>* ret = solution.clone();
-//        
-//        bool flag = true;
-//        
-//        std::cout << "    - ls: " << ret->evaluate() << std::endl;
-//        
-//        while(flag){
-//                       
-//            flag = false;
-//            
-//            auto neighborhood = this->neighborhoodAlgorithm.solvev(*ret);
-//            
-//            auto neighbor = this->selectionAlgorithm.solve(*neighborhood);
-//            
-//            if(neighbor != nullptr){
-//            
-//                if (this->solutionComparator(*neighbor, *ret)) {
-//
-//                    delete ret;
-//
-//                    ret = neighbor;
-//
-//                    flag = true;
-//
-//                    std::cout << "." <<  ret->evaluate(); // eliminar
-//
-//                } else {
-//
-//                    delete neighbor;
-//
-//                } 
-//            
-//            }
-//            
-//            for (auto neighbor : *neighborhood) {
-//                    
-//                delete neighbor;
-//
-//            }
-//            
-//            delete neighborhood;
-//                    
-//        }
-//        
-//        std::cout << std::endl; // eliminar
-//
-//        return ret;
-//
-//    }
     
     virtual void reset(){}
 

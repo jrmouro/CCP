@@ -1,7 +1,8 @@
 #ifndef CCLOCALSEARCH_MPI_H
 #define CCLOCALSEARCH_MPI_H
 
-#include "_Local_Search.h"
+#include <mpi.h>
+#include "CCLocalSearch.h"
 #include "CCSolutionComparator.h"
 #include "CCNeighborhood_mpi.h"
 
@@ -69,7 +70,7 @@ public:
 
     private:
 
-        int node
+        int node;
 
 
 };
