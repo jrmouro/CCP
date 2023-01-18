@@ -222,8 +222,33 @@ public:
 
     }
 
+    float **getAjdMatrix()const{
+        return this->adjMatrix;
+    }
     
+    int* getNodosWeight()const {
+        return this->nodosWeight;
+    }
 
+    int getSize()const{
+        return this->size;
+    }
+
+    void fillInAdjMatrixNodosWeight(float* adjMatrix, int* nodosWeight)const{
+
+        for (int i = 0; i < size; i++) {
+
+            nodosWeight[i] = this->nodosWeight[i];
+            
+            for (int j = 0; j < size; j++) {
+
+                adjMatrix[i*size + j] = this->adjMatrix[i][j];
+
+            }
+
+        }
+
+    }
 
 private:
 

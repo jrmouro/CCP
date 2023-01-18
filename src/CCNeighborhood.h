@@ -90,6 +90,7 @@ public:
     }
     
     protected:
+    
         const _Solution_Comparator<float>& solutionComparator;
     
 };

@@ -6,7 +6,9 @@
 #include "CCSolution.h"
 
 class CCSolutionComparator:public _Solution_Comparator<float> {
+
 public:
+
     CCSolutionComparator():rate(1.0){}
     CCSolutionComparator(float rate):rate(rate){}
     CCSolutionComparator(const CCSolutionComparator& other):rate(other.rate){}
@@ -17,8 +19,8 @@ public:
     
     virtual bool operator()(const _Solution<float>& solution, const float& value) const{
         return solution.GetEvaluation() - solution.GetEvaluation()* rate * ((CCSolution&)solution).GetPenalty() > value;
-    }
-    
+    }    
+   
     
     virtual ~CCSolutionComparator(){}
     

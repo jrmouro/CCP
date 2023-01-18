@@ -185,6 +185,30 @@ public:
         }
         return ret;
     }
+
+    int** GetClusterMatrix()const{
+
+        int** matrix = new int*[instance.GetNClusters()];
+        for (int i = 0; i < instance.GetNClusters(); i++){
+            matrix[i] = new int[instance.GetSize()];
+            for (int j = 0; j < instance.GetSize(); j++){                
+                matrix[i][j] = clusters.at(i)->GetNodo(j);
+            }            
+        }
+
+        return matrix;
+
+    }
+
+    void fillInClusterMatrix(int *clusterMatrix)const{
+
+        for (int i = 0; i < instance.GetNClusters(); i++){            
+            for (int j = 0; j < instance.GetSize(); j++){                
+                clusterMatrix[i * instance.GetSize() + j] = clusters.at(i)->GetNodo(j);
+            }            
+        }
+
+    }
     
     
 private:

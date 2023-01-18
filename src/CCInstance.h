@@ -181,6 +181,23 @@ public:
         return os;
     }
 
+    void fillInAdjMatrixNodosWeight(float* adjMatrix, int* nodosWeight)const{
+
+        graph->fillInAdjMatrixNodosWeight(adjMatrix, nodosWeight);
+
+    }
+
+    void fillInClusterLimits(int* lower, int *upper){
+
+        for (int i = 0; i < nClusters; i++)
+        {
+            lower[i] = lowerClusterLimit[i];
+            upper[i] = upperClusterLimit[i];
+        }
+        
+
+    }
+
 private:
     std::string filename;
     int size = 0, nClusters = 0, weight = 0;
